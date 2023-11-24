@@ -98,7 +98,7 @@ export const Todo = () => {
   }, []);
 
   return (
-    <div>
+    <div style={{ textAlign: "center" }}>
       <h1>Todoリスト</h1>
       <TodoInput text={text} onChange={handleChangeInput} onClick={handleAdd} />
       <TodoList

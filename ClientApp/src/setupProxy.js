@@ -5,7 +5,7 @@ const target = env.ASPNETCORE_HTTPS_PORT
   ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}`
   : env.ASPNETCORE_URLS
   ? env.ASPNETCORE_URLS.split(";")[0]
-  : "http://localhost:<ポート番号>";
+  : "http://localhost:13765";
 
 const context = ["/api/"];
 
