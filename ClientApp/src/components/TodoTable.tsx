@@ -76,7 +76,6 @@ export default function TodoTable() {
               </TableCell>
             <TableCell>タスク</TableCell>
             <TableCell align="center">期日</TableCell>
-            <TableCell align="center">優先度</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

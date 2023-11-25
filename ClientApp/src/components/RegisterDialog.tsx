@@ -51,7 +51,6 @@ export default function RegisterDialog({ open, onClose }: Props) {
       <RegisterDialogContent />
       <DialogContent>
         <DialogContentText>
-          登録するタスクの情報を入力してください。
         </DialogContentText>
       </DialogContent>
       <DialogActions>

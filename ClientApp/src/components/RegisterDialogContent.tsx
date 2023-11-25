@@ -2,10 +2,8 @@ import React from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
-import Slider from '@material-ui/core/Slider';
-import Input from '@material-ui/core/Input';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
+// import DialogContentText from '@material-ui/core/DialogContentText';
 import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
@@ -59,9 +57,9 @@ export default function RegisterDialogContent() {
     // このタグ内にある部分が pickers のカバーする範囲になる 
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
       <DialogContent>
-        <DialogContentText>
+        {/* <DialogContentText> */}
           登録するタスクの情報を入力してください。
-        </DialogContentText>
+        {/* </DialogContentText> */}
         <Grid container spacing={6} direction="column">
           <Grid item>
             <TextField
@@ -84,40 +82,6 @@ export default function RegisterDialogContent() {
               invalidDateMessage="無効な形式です"
               minDateMessage="昨日以前の日付を指定することはできません"
             />
-          </Grid>
-          <Grid container item spacing={2}>
-            <Grid item xs={2}>
-              <DialogContentText>優先度</DialogContentText>
-            </Grid>
-            <Grid item xs={8}>
-              <Slider
-                value={priority}
-                onChange={handleSliderChange}
-                defaultValue={1}        // デフォルト値 }
-                aria-valuetext=""
-                aria-labelledby="discrete-slider"
-                valueLabelDisplay="on"  // 数字の吹き出しを常に表示する }
-                step={1}  // 変動幅 }
-                marks     // 境界に印をつける }
-                min={1}   // 最小値 }
-                max={5}   // 最大値 }
-              />
-            </Grid>
-            <Grid item xs={2}>
-              <Input
-                value={priority}
-                margin="dense"
-                onChange={handleInputChange}
-                onBlur={handleBlur}
-                inputProps={{
-                  step: 1,
-                  min: 1,
-                  max: 5,
-                  type: 'number',
-                  'aria-labelledby': 'input-slider'
-                }}
-              />
-            </Grid>
           </Grid>
         </Grid>
       </DialogContent>
