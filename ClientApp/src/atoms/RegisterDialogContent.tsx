@@ -5,6 +5,11 @@ export const taskContentState = atom<string>({
   default: ''
 });
 
+export const taskDetailState = atom<string>({
+  key: 'taskDetailState',
+  default: ''
+});
+
 export const taskDeadlineState = atom<Date>({
   key: 'taskDeadlineState',
   default: new Date()

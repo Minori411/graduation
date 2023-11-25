@@ -3,7 +3,6 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 import Grid from '@material-ui/core/Grid';
 import TextField from '@material-ui/core/TextField';
 import DialogContent from '@material-ui/core/DialogContent';
-// import DialogContentText from '@material-ui/core/DialogContentText';
 import DateFnsUtils from '@date-io/date-fns';
 import {
   MuiPickersUtilsProvider,
@@ -12,15 +11,15 @@ import {
 
 import {
   taskContentState,
+  taskDetailState,
   taskDeadlineState,
-  taskPriorityState
 } from '../atoms/RegisterDialogContent';
 
 export default function RegisterDialogContent() {
   // atom から state を取得する
   const setContent = useSetRecoilState(taskContentState);
+  const setDetail = useSetRecoilState(taskDetailState);
   const [deadline, setDeadline] = useRecoilState(taskDeadlineState);
-  const [priority, setPriority] = useRecoilState(taskPriorityState);
 
   // タスクの内容が変更されたとき
   const handleContentChange = (
@@ -29,37 +28,24 @@ export default function RegisterDialogContent() {
     setContent(e.target.value);
   };
 
+  const handleDetailChange = (
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    setDetail(e.target.value);
+  };
+
   // タスクの期限が変更されたとき
   const handleDeadlineChange = (date: any) => {
     setDeadline(date);
-  };
-
-  // スライダーが動かされたとき
-  const handleSliderChange = (e: React.ChangeEvent<{}>, newValue: any) => {
-    setPriority(newValue);
-  };
-
-  // スライダー横の数値入力欄が変更されたとき
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPriority(Number(e.target.value));
-  };
-
-  // 数値入力欄で１～５以外の数値が指定されたとき
-  const handleBlur = () => {
-    if (priority < 1) {
-      setPriority(1);
-    } else if (priority > 5) {
-      setPriority(5);
-    }
   };
 
   return (
     // このタグ内にある部分が pickers のカバーする範囲になる 
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
       <DialogContent>
-        {/* <DialogContentText> */}
+        
           登録するタスクの情報を入力してください。
-        {/* </DialogContentText> */}
+       
         <Grid container spacing={6} direction="column">
           <Grid item>
             <TextField
@@ -67,6 +53,13 @@ export default function RegisterDialogContent() {
               margin="dense"
               id="name"
               label="内容"
+              fullWidth   // 横幅いっぱいにする }
+            />
+            <TextField
+              onChange={handleDetailChange}
+              margin="dense"
+              id="detail"
+              label="詳細"
               fullWidth   // 横幅いっぱいにする }
             />
             <KeyboardDatePicker

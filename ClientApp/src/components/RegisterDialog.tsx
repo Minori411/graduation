@@ -9,6 +9,7 @@ import { useRecoilValue, useRecoilState } from 'recoil';
 import { tasksState } from '../atoms/Tasks';
 import {
   taskContentState,
+  taskDetailState,
   taskDeadlineState,
   taskPriorityState
 } from '../atoms/RegisterDialogContent';
@@ -25,6 +26,7 @@ type Props = {
 
 export default function RegisterDialog({ open, onClose }: Props) {
     const taskContent = useRecoilValue(taskContentState);
+    const taskDetail= useRecoilValue(taskDetailState);
     const taskDeadline = useRecoilValue(taskDeadlineState);
     const taskPriority = useRecoilValue(taskPriorityState);
     const [tasks, setTasks] = useRecoilState(tasksState);
@@ -34,6 +36,7 @@ export default function RegisterDialog({ open, onClose }: Props) {
         ...tasks,
         {
           content: taskContent,
+          detail : taskDetail,
           deadline: taskDeadline,
           priority: taskPriority
         }

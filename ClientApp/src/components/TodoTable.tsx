@@ -75,6 +75,7 @@ export default function TodoTable() {
                 />
               </TableCell>
             <TableCell>タスク</TableCell>
+            <TableCell align="center">詳細</TableCell>
             <TableCell align="center">期日</TableCell>
           </TableRow>
         </TableHead>
@@ -88,11 +89,12 @@ export default function TodoTable() {
                   />
                 </TableCell>
               <TableCell>{task.content}</TableCell>
+              <TableCell align="center">{task.detail}</TableCell>
               <TableCell align="center">
                 {/*// 年/月/日の形式に変換して表示する */}
                 {format(task.deadline, 'yyyy/MM/dd')}
               </TableCell>
-              <TableCell align="center">{task.priority}</TableCell>
+             
             </TableRow>
           ))}
         </TableBody>
