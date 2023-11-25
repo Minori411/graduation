@@ -10,7 +10,6 @@ export default function App() {
     <RecoilRoot>
       <div className="App">
         <TodoAppBar />
-        {/* <Todo/> */}
         <TodoList/>
       </div>
     </RecoilRoot>
