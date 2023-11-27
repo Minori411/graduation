@@ -69,6 +69,7 @@ export default function RegisterDialogContent() {
             // minDate={new Date()}      // 現在の日より前の日は選択不可 }
             // margin="normal"
             // id="date-picker-inline"
+            inputFormat="yyyy/MM/dd"
             label="期限"
             value={deadline}
             onChange={handleDeadlineChange}
