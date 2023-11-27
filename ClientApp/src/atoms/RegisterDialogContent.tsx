@@ -15,7 +15,3 @@ export const taskDeadlineState = atom<Date>({
   default: new Date()
 });
 
-export const taskPriorityState = atom<number>({
-  key: 'taskPriorityState',
-  default: 1
-});

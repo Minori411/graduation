@@ -1,13 +1,13 @@
 import React from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
-import Grid from '@material-ui/core/Grid';
-import TextField from '@material-ui/core/TextField';
-import DialogContent from '@material-ui/core/DialogContent';
-import DateFnsUtils from '@date-io/date-fns';
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker
-} from '@material-ui/pickers';
+import Grid from '@mui/material/Grid';
+import TextField from '@mui/material/TextField';
+import DialogContent from '@mui/material/DialogContent';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { TextFieldProps } from '@mui/material';
+
 
 import {
   taskContentState,
@@ -35,49 +35,52 @@ export default function RegisterDialogContent() {
   };
 
   // タスクの期限が変更されたとき
-  const handleDeadlineChange = (date: any) => {
-    setDeadline(date);
+  const handleDeadlineChange = (date: Date | null) => {
+    if (date) {
+      setDeadline(date);
+    }
   };
 
   return (
-    // このタグ内にある部分が pickers のカバーする範囲になる 
-    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
       <DialogContent>
-        
-          登録するタスクの情報を入力してください。
-       
-        <Grid container spacing={6} direction="column">
-          <Grid item>
+        登録するタスクの情報を入力してください。
+        {/* <Grid container spacing={6} direction="column"> */}
+          {/* <Grid item> */}
             <TextField
               onChange={handleContentChange}
               margin="dense"
               id="name"
               label="内容"
-              fullWidth   // 横幅いっぱいにする }
+              fullWidth
             />
             <TextField
               onChange={handleDetailChange}
               margin="dense"
               id="detail"
               label="詳細"
-              fullWidth   // 横幅いっぱいにする }
+              fullWidth
             />
-            <KeyboardDatePicker
-              disableToolbar
-              variant="inline"          // カレンダーが出現する位置 }
-              format="yyyy/MM/dd"       // 表示する日付のフォーマット }
-              minDate={new Date()}      // 現在の日より前の日は選択不可 }
-              margin="normal"
-              id="date-picker-inline"
-              label="期限"
-              value={deadline}
-              onChange={date => handleDeadlineChange(date)}
-              invalidDateMessage="無効な形式です"
-              minDateMessage="昨日以前の日付を指定することはできません"
-            />
-          </Grid>
-        </Grid>
+            <DatePicker
+            disablePast
+            openTo="year"
+            views={['day']}          // カレンダーが出現する位置 }
+            // format="yyyy/MM/dd"       // 表示する日付のフォーマット }
+            // minDate={new Date()}      // 現在の日より前の日は選択不可 }
+            // margin="normal"
+            // id="date-picker-inline"
+            label="期限"
+            value={deadline}
+            onChange={handleDeadlineChange}
+            renderInput={(params: TextFieldProps) => (
+              <TextField {...params} />
+            )}
+            // invalidDateMessage="無効な形式です"
+            // minDateMessage="昨日以前の日付を指定することはできません"
+          />
+          {/* </Grid> */}
+        {/* </Grid> */}
       </DialogContent>
-    </MuiPickersUtilsProvider>
+    </LocalizationProvider>
   );
 }
