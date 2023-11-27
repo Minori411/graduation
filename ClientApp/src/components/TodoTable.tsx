@@ -11,7 +11,9 @@ import Checkbox from '@material-ui/core/Checkbox';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import DatePicker from './DatePicker'; // カレンダーコンポーネントを追加
+import { DatePicker } from "@mui/lab";
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
 
 import { tasksState, Task } from '../atoms/Tasks';
 
@@ -35,7 +37,7 @@ export default function TodoTable() {
   const classes = useStyles();
   const [tasks, setTasks] = useRecoilState<Task[]>(tasksState);
   const [editingIndex, setEditingIndex] = useState<number>(-1);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null); // 選択された日付を管理
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null); // 選択した日付を管理
 
   const handleCheck = (index: number) => {
     setTasks((prevTasks) => {
@@ -54,6 +56,7 @@ export default function TodoTable() {
 
   const handleEdit = (index: number) => {
     setEditingIndex(index);
+    setSelectedDate(tasks[index].deadline); // 編集モードに入ったときに選択した日付をセットする
   };
 
   const handleSave = (index: number, updatedContent: string, updatedDetail: string) => {
@@ -64,7 +67,7 @@ export default function TodoTable() {
             ...task,
             content: updatedContent,
             detail: updatedDetail,
-            deadline: selectedDate, // 選択された日付を保存
+            deadline: selectedDate,
           };
         }
         return task;
@@ -151,15 +154,24 @@ export default function TodoTable() {
                 )}
               </TableCell>
               <TableCell className={task.isComplete ? classes.completedTask : ''} align="right">
-                {editingIndex === index ? (
-                  <DatePicker
-                    selected={task.deadline}
-                    onChange={(date: Date | null) => setSelectedDate(date)}
-                  />
-                ) : (
-                  format(task.deadline, 'yyyy/MM/dd')
-                )}
-              </TableCell>
+  {editingIndex === index ? (
+    <DatePicker
+      value={selectedDate}
+      onChange={(date:Date|null) => setSelectedDate(date)}
+      renderInput={(params:any) => (
+        <TextField
+          {...params}
+          variant="standard"
+          type="text"
+          value={params.value}
+          onChange={params.onChange}
+        />
+      )}
+    />
+  ) : (
+    format(task.deadline, 'yyyy/MM/dd')
+  )}
+</TableCell>
               <TableCell align="center">
                 {editingIndex === index ? (
                   <Button
