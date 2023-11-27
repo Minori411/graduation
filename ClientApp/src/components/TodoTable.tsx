@@ -11,9 +11,9 @@ import Checkbox from '@material-ui/core/Checkbox';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import { DatePicker } from "@mui/lab";
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 import { tasksState, Task } from '../atoms/Tasks';
 
@@ -153,25 +153,27 @@ export default function TodoTable() {
                   task.detail
                 )}
               </TableCell>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
               <TableCell className={task.isComplete ? classes.completedTask : ''} align="right">
-  {editingIndex === index ? (
-    <DatePicker
-      value={selectedDate}
-      onChange={(date:Date|null) => setSelectedDate(date)}
-      renderInput={(params:any) => (
-        <TextField
-          {...params}
-          variant="standard"
-          type="text"
-          value={params.value}
-          onChange={params.onChange}
-        />
-      )}
-    />
-  ) : (
-    format(task.deadline, 'yyyy/MM/dd')
-  )}
-</TableCell>
+                {editingIndex === index ? (
+                  <DatePicker
+                    value={selectedDate}
+                    onChange={(date:Date|null) => setSelectedDate(date)}
+                    renderInput={(params:any) => (
+                      <TextField
+                        {...params}
+                        variant="standard"
+                        type="text"
+                        value={params.value}
+                        onChange={params.onChange}
+                      />
+                    )}
+                  />
+                  ) : (
+                    format(task.deadline, 'yyyy/MM/dd')
+                  )}
+                </TableCell>
+              </LocalizationProvider>
               <TableCell align="center">
                 {editingIndex === index ? (
                   <Button
