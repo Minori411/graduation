@@ -12,7 +12,15 @@ import {
   taskContentState,
   taskDetailState,
   taskDeadlineState,
+  tagstate
 } from '../atoms/RegisterDialogContent';
+import { atom } from 'recoil';
+import { Task } from '../atoms/Tasks';
+
+export const taskCategoryState = atom<string>({
+  key: 'taskCategoryState',
+  default: '',
+});
 
 type Props = {
   open: boolean;
@@ -34,7 +42,7 @@ export default function RegisterDialog({ open, onClose }: Props) {
       isComplete: false,
     };
 
-    setTasks((prevTasks) => [...prevTasks, newTask]);
+    setTasks((prevTasks) => [...prevTasks, newTask] as Task[]);
     onClose();
   };
 

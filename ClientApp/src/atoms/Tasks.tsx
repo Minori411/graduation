@@ -6,6 +6,7 @@ export interface Task {
   detail: string;
   deadline: any;
   isComplete: boolean;
+  tags: string[];
 }
 
 export const tasksState = atom<Task[]>({

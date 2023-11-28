@@ -35,14 +35,21 @@ const useStyles = makeStyles({
     writingMode: 'horizontal-tb',
     paddingLeft: '20px',
   },
+  tagCell: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  tag: {
+    margin: '4px',
+  },
 });
 
 export default function TodoTable() {
   const classes = useStyles();
   const [tasks, setTasks] = useRecoilState<Task[]>(tasksState);
   const [editingIndex, setEditingIndex] = useState<number>(-1);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null); // 選択した日付を管理
-  const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false); // 削除確認モーダルのオープン/クローズの状態
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
   const [confirmDelete, setConfirmDelete] = useState<(() => void) | null>(null);
 
   const handleCheck = (index: number) => {
@@ -62,10 +69,10 @@ export default function TodoTable() {
 
   const handleEdit = (index: number) => {
     setEditingIndex(index);
-    setSelectedDate(tasks[index].deadline); // 編集モードに入ったときに選択した日付をセットする
+    setSelectedDate(tasks[index].deadline);
   };
 
-  const handleSave = (index: number, updatedContent: string, updatedDetail: string) => {
+  const handleSave = (index: number, updatedContent: string, updatedDetail: string, updatedTags: string[]) => {
     setTasks((prevTasks) => {
       const updatedTasks = prevTasks.map((task, i) => {
         if (i === index) {
@@ -74,6 +81,7 @@ export default function TodoTable() {
             content: updatedContent,
             detail: updatedDetail,
             deadline: selectedDate,
+            tags: updatedTags, // タグの状態を更新
           };
         }
         return task;
@@ -82,142 +90,156 @@ export default function TodoTable() {
     });
     setEditingIndex(-1);
   };
-
   const handleConfirmDelete = () => {
-    setTasks(prevTasks => {
+    setTasks((prevTasks) => {
       const updatedTasks = [...prevTasks];
-      updatedTasks.splice(editingIndex, 1); // 選択されたタスクを削除
+      updatedTasks.splice(editingIndex, 1);
       return updatedTasks;
     });
     setEditingIndex(-1);
     setOpenDeleteModal(false);
   };
-  
-  // handleDelete関数の中で次のように修正
+
   const handleDelete = (index: number) => {
-    // setEditingIndex(index); // 編集モードのindexをセット
+    setEditingIndex(index);
     setOpenDeleteModal(true);
   };
-  
+
   const handleCloseDeleteModal = () => {
     setOpenDeleteModal(false);
   };
 
+  if (!tasks) {
+    setTasks([]);
+  }
 
   return (
     <TableContainer>
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
-            <TableCell className={classes.horizontalText}>完了</TableCell>
+            <TableCell>完了</TableCell>
             <TableCell>タスク</TableCell>
-            <TableCell align="left">詳細</TableCell>
-            <TableCell align="right">期日</TableCell>
-            <TableCell align="center">編集/削除</TableCell>
+            <TableCell>詳細</TableCell>
+            <TableCell>期日</TableCell>
+            <TableCell>タグ</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {tasks.map((task, index) => (
-            <TableRow key={task.id}>
-              <TableCell className={classes.completeCell} padding="checkbox">
-                <Checkbox
-                  checked={task.isComplete}
-                  onChange={() => handleCheck(index)}
-                />
-              </TableCell>
-              <TableCell className={task.isComplete ? classes.completedTask : ''}>
-                {editingIndex === index ? (
-                  <TextField
-                    value={task.content}
-                    onChange={(e) => {
-                      const updatedContent = e.target.value;
-                      setTasks((prevTasks) => {
-                        const updatedTasks = prevTasks.map((t, i) => {
-                          if (i === index) {
-                            return {
-                              ...t,
-                              content: updatedContent,
-                            };
-                          }
-                          return t;
-                        });
-                        return updatedTasks;
-                      });
-                    }}
+          {tasks ? (
+            tasks.map((task, index) => (
+              <TableRow key={task.id}>
+                <TableCell className={classes.completeCell} padding="checkbox">
+                  <Checkbox
+                    checked={task.isComplete}
+                    onChange={() => handleCheck(index)}
                   />
-                ) : (
-                  task.content
-                )}
-              </TableCell>
-              <TableCell className={task.isComplete ? classes.completedTask : ''} align="left">
-                {editingIndex === index ? (
-                  <TextField
-                    value={task.detail}
-                    onChange={(e) => {
-                      const updatedDetail = e.target.value;
-                      setTasks((prevTasks) => {
-                        const updatedTasks = prevTasks.map((t, i) => {
-                          if (i === index) {
-                            return {
-                              ...t,
-                              detail: updatedDetail,
-                            };
-                          }
-                          return t;
+                </TableCell>
+                <TableCell className={task.isComplete ? classes.completedTask : ''}>
+                  {editingIndex === index ? (
+                    <TextField
+                      value={task.content}
+                      onChange={(e) => {
+                        const updatedContent = e.target.value;
+                        setTasks((prevTasks) => {
+                          const updatedTasks = prevTasks.map((t, i) => {
+                            if (i === index) {
+                              return {
+                                ...t,
+                                content: updatedContent,
+                              };
+                            }
+                            return t;
+                          });
+                          return updatedTasks;
                         });
-                        return updatedTasks;
-                      });
-                    }}
-                  />
-                ) : (
-                  task.detail
-                )}
-              </TableCell>
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                      }}
+                    />
+                  ) : (
+                    task.content
+                  )}
+                </TableCell>
+                <TableCell className={task.isComplete ? classes.completedTask : ''} align="left">
+                  {editingIndex === index ? (
+                    <TextField
+                      value={task.detail}
+                      onChange={(e) => {
+                        const updatedDetail = e.target.value;
+                        setTasks((prevTasks) => {
+                          const updatedTasks = prevTasks.map((t, i) => {
+                            if (i === index) {
+                              return {
+                                ...t,
+                                detail: updatedDetail,
+                              };
+                            }
+                            return t;
+                          });
+                          return updatedTasks;
+                        });
+                      }}
+                    />
+                  ) : (
+                    task.detail
+                  )}
+                </TableCell>
                 <TableCell className={task.isComplete ? classes.completedTask : ''} align="right">
                   {editingIndex === index ? (
-                    <DatePicker
-                      disablePast
-                      value={selectedDate}
-                      onChange={(date: Date | null) => setSelectedDate(date)}
-                      inputFormat="yyyy/MM/dd" // 表示形式を設定
-                      renderInput={(params: any) => (
-                        <TextField
-                          {...params}
-                          variant="standard"
-                          type="text"
-                          value={params.value}
-                          onChange={params.onChange}
-                        />
-                      )}
-                    />
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                      <DatePicker
+                        disablePast
+                        value={selectedDate}
+                        onChange={(date: Date | null) => setSelectedDate(date)}
+                        inputFormat="yyyy/MM/dd"
+                        renderInput={(params:any) => (
+                          <TextField
+                            {...params}
+                            variant="standard"
+                            type="text"
+                            value={params.value}
+                            onChange={params.onChange}
+                          />
+                        )}
+                      />
+                    </LocalizationProvider>
                   ) : (
                     format(task.deadline, 'yyyy/MM/dd')
                   )}
                 </TableCell>
-              </LocalizationProvider>
-              <TableCell align="center">
-                {editingIndex === index ? (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => handleSave(index, task.content, task.detail)}
-                  >
-                    保存
-                  </Button>
-                ) : (
-                  <>
-                    <Button variant="contained" color="primary" onClick={() => handleEdit(index)}>
-                      編集
-                    </Button>
-                    <Button variant="contained" color="secondary" onClick={() => handleDelete(index)}>
-                      削除
-                    </Button>
-                  </>
-                )}
+                <TableCell className={classes.tagCell}>
+                {task.tags ? task.tags.map((tag, tagIndex) => (
+                  <span key={tagIndex} className={classes.tag}>
+                    {tag}
+                  </span>
+                )) : ""}
               </TableCell>
+                <TableCell align="center">
+                  {editingIndex === index ? (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleSave(index, task.content, task.detail, task.tags)}
+                    >
+                      保存
+                    </Button>
+                  ) : (
+                    <>
+                      <Button variant="contained" color="primary" onClick={() => handleEdit(index)}>
+                        編集
+                      </Button>
+                      <Button variant="contained" color="secondary" onClick={() => handleDelete(index)}>
+                        削除
+                      </Button>
+                    </>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={5}>タスクがありません</TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
       <Dialog open={openDeleteModal} onClose={handleCloseDeleteModal}>
