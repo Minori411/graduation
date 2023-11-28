@@ -45,8 +45,8 @@ export default function RegisterDialogContent() {
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <DialogContent>
         登録するタスクの情報を入力してください。
-        {/* <Grid container spacing={6} direction="column"> */}
-          {/* <Grid item> */}
+        <Grid container spacing={6} direction="column"> 
+          <Grid item>
             <TextField
               onChange={handleContentChange}
               margin="dense"
@@ -64,11 +64,7 @@ export default function RegisterDialogContent() {
             <DatePicker
             disablePast
             openTo="year"
-            views={['day']}          // カレンダーが出現する位置 }
-            // format="yyyy/MM/dd"       // 表示する日付のフォーマット }
-            // minDate={new Date()}      // 現在の日より前の日は選択不可 }
-            // margin="normal"
-            // id="date-picker-inline"
+            views={['day']}         
             inputFormat="yyyy/MM/dd"
             label="期限"
             value={deadline}
@@ -76,11 +72,9 @@ export default function RegisterDialogContent() {
             renderInput={(params: TextFieldProps) => (
               <TextField {...params} />
             )}
-            // invalidDateMessage="無効な形式です"
-            // minDateMessage="昨日以前の日付を指定することはできません"
           />
-          {/* </Grid> */}
-        {/* </Grid> */}
+          </Grid> 
+        </Grid>
       </DialogContent>
     </LocalizationProvider>
   );

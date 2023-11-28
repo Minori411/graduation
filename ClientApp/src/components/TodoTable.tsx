@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
@@ -11,7 +11,11 @@ import Checkbox from '@material-ui/core/Checkbox';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import Dialog from '@material-ui/core/Dialog';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogActions from '@material-ui/core/DialogActions';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
@@ -38,6 +42,8 @@ export default function TodoTable() {
   const [tasks, setTasks] = useRecoilState<Task[]>(tasksState);
   const [editingIndex, setEditingIndex] = useState<number>(-1);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null); // 選択した日付を管理
+  const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false); // 削除確認モーダルのオープン/クローズの状態
+  const [confirmDelete, setConfirmDelete] = useState<(() => void) | null>(null);
 
   const handleCheck = (index: number) => {
     setTasks((prevTasks) => {
@@ -77,12 +83,26 @@ export default function TodoTable() {
     setEditingIndex(-1);
   };
 
-  const handleDelete = (index: number) => {
-    setTasks((prevTasks) => {
-      const updatedTasks = prevTasks.filter((_, i) => i !== index);
+  const handleConfirmDelete = () => {
+    setTasks(prevTasks => {
+      const updatedTasks = [...prevTasks];
+      updatedTasks.splice(editingIndex, 1); // 選択されたタスクを削除
       return updatedTasks;
     });
+    setEditingIndex(-1);
+    setOpenDeleteModal(false);
   };
+  
+  // handleDelete関数の中で次のように修正
+  const handleDelete = (index: number) => {
+    // setEditingIndex(index); // 編集モードのindexをセット
+    setOpenDeleteModal(true);
+  };
+  
+  const handleCloseDeleteModal = () => {
+    setOpenDeleteModal(false);
+  };
+
 
   return (
     <TableContainer>
@@ -93,7 +113,7 @@ export default function TodoTable() {
             <TableCell>タスク</TableCell>
             <TableCell align="left">詳細</TableCell>
             <TableCell align="right">期日</TableCell>
-            <TableCell align="center">操作</TableCell>
+            <TableCell align="center">編集/削除</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -154,21 +174,23 @@ export default function TodoTable() {
                 )}
               </TableCell>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <TableCell className={task.isComplete ? classes.completedTask : ''} align="right">
-                {editingIndex === index ? (
-                  <DatePicker
-                    value={selectedDate}
-                    onChange={(date:Date|null) => setSelectedDate(date)}
-                    renderInput={(params:any) => (
-                      <TextField
-                        {...params}
-                        variant="standard"
-                        type="text"
-                        value={params.value}
-                        onChange={params.onChange}
-                      />
-                    )}
-                  />
+                <TableCell className={task.isComplete ? classes.completedTask : ''} align="right">
+                  {editingIndex === index ? (
+                    <DatePicker
+                      disablePast
+                      value={selectedDate}
+                      onChange={(date: Date | null) => setSelectedDate(date)}
+                      inputFormat="yyyy/MM/dd" // 表示形式を設定
+                      renderInput={(params: any) => (
+                        <TextField
+                          {...params}
+                          variant="standard"
+                          type="text"
+                          value={params.value}
+                          onChange={params.onChange}
+                        />
+                      )}
+                    />
                   ) : (
                     format(task.deadline, 'yyyy/MM/dd')
                   )}
@@ -198,6 +220,20 @@ export default function TodoTable() {
           ))}
         </TableBody>
       </Table>
+      <Dialog open={openDeleteModal} onClose={handleCloseDeleteModal}>
+        <DialogTitle>タスクの削除</DialogTitle>
+        <DialogContent>
+          <p>本当にこのタスクを削除しますか？</p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDeleteModal} color="primary">
+            キャンセル
+          </Button>
+          <Button onClick={handleConfirmDelete} color="secondary">
+            削除
+          </Button>
+        </DialogActions>
+      </Dialog>
     </TableContainer>
   );
 }
