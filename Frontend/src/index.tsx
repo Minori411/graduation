@@ -25,3 +25,28 @@ export default function App() {
 
 const rootElement = document.getElementById("root")!;
 ReactDOM.render(<App />, rootElement);
+
+// import React, { useState, useEffect } from 'react';
+// import axios from 'axios';
+
+// function App() {
+//     const [data, setData] = useState('');
+
+//     useEffect(() => {
+//         axios.get('/api/mydata') // バックエンドのAPIエンドポイントを指定
+//             .then((response) => {
+//                 setData(response.data.message);
+//             })
+//             .catch((error) => {
+//                 console.error(error);
+//             });
+//     }, []);
+
+//     return (
+//         <div>
+//             <p>Data from the backend: {data}</p>
+//         </div>
+//     );
+// }
+
+// export default App;
