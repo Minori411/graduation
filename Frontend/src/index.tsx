@@ -7,9 +7,14 @@ import PasswordReset from './components/PasswordReset'
 import { RecoilRoot } from 'recoil';
 import TodoAppBar from './components/TodoAppBar';
 import ReactDOM from "react-dom";
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+const theme = createTheme();
+
 
 export default function App() {
   return (
+    <ThemeProvider theme={theme}>
     <Router>
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
@@ -20,6 +25,7 @@ export default function App() {
         </Routes>
       </Suspense>
     </Router>
+    </ThemeProvider>
   );
 }
 

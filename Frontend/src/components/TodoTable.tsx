@@ -1,51 +1,55 @@
 import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
-import Table from '@material-ui/core/Table';
-import TableHead from '@material-ui/core/TableHead';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableRow from '@material-ui/core/TableRow';
+import Table from '@mui/material/Table';
+import TableHead from '@mui/material/TableHead';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableRow from '@mui/material/TableRow';
 import { format } from 'date-fns';
-import Checkbox from '@material-ui/core/Checkbox';
-import { makeStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogActions from '@material-ui/core/DialogActions';
+import Checkbox from '@mui/material/Checkbox';
+import { makeStyles } from '@mui/material/styles';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 import { tasksState, Task } from '../atoms/Tasks';
 
-const useStyles = makeStyles({
-  table: {
-    minWidth: 650,
-  },
-  completeCell: {
-    paddingLeft: '20px',
-  },
-  completedTask: {
-    textDecoration: 'line-through',
-  },
-  horizontalText: {
-    writingMode: 'horizontal-tb',
-    paddingLeft: '20px',
-  },
-  tagCell: {
-    display: 'flex',
-    flexWrap: 'wrap',
-  },
-  tag: {
-    margin: '4px',
-  },
+import { styled } from '@mui/system';
+
+const TableWrapper = styled(Table)({
+  minWidth: 650,
+});
+
+const CompleteCell = styled(TableCell)({
+  paddingLeft: '20px',
+});
+
+const HorizontalTextCell = styled(TableCell)({
+  writingMode: 'horizontal-tb',
+  paddingLeft: '20px',
+});
+
+const CompletedTaskCell = styled(TableCell)({
+  textDecoration: 'line-through',
+});
+
+const TagCell = styled(TableCell)({
+  display: 'flex',
+  flexWrap: 'wrap',
+});
+
+const Tag = styled('span')({
+  margin: '4px',
 });
 
 export default function TodoTable() {
-  const classes = useStyles();
   const [tasks, setTasks] = useRecoilState<Task[]>(tasksState);
   const [editingIndex, setEditingIndex] = useState<number>(-1);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -81,7 +85,7 @@ export default function TodoTable() {
             content: updatedContent,
             detail: updatedDetail,
             deadline: selectedDate,
-            tags: updatedTags, // タグの状態を更新
+            tags: updatedTags,
           };
         }
         return task;
@@ -90,6 +94,7 @@ export default function TodoTable() {
     });
     setEditingIndex(-1);
   };
+
   const handleConfirmDelete = () => {
     setTasks((prevTasks) => {
       const updatedTasks = [...prevTasks];
@@ -115,7 +120,7 @@ export default function TodoTable() {
 
   return (
     <TableContainer>
-      <Table className={classes.table}>
+      <TableWrapper>
         <TableHead>
           <TableRow>
             <TableCell>完了</TableCell>
@@ -129,13 +134,13 @@ export default function TodoTable() {
           {tasks ? (
             tasks.map((task, index) => (
               <TableRow key={task.id}>
-                <TableCell className={classes.completeCell} padding="checkbox">
+                <CompleteCell padding="checkbox">
                   <Checkbox
                     checked={task.isComplete}
                     onChange={() => handleCheck(index)}
                   />
-                </TableCell>
-                <TableCell className={task.isComplete ? classes.completedTask : ''}>
+                </CompleteCell>
+                <TableCell>
                   {editingIndex === index ? (
                     <TextField
                       value={task.content}
@@ -159,7 +164,7 @@ export default function TodoTable() {
                     task.content
                   )}
                 </TableCell>
-                <TableCell className={task.isComplete ? classes.completedTask : ''} align="left">
+                <HorizontalTextCell>
                   {editingIndex === index ? (
                     <TextField
                       value={task.detail}
@@ -182,8 +187,8 @@ export default function TodoTable() {
                   ) : (
                     task.detail
                   )}
-                </TableCell>
-                <TableCell className={task.isComplete ? classes.completedTask : ''} align="right">
+                </HorizontalTextCell>
+                <TableCell>
                   {editingIndex === index ? (
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                       <DatePicker
@@ -191,7 +196,7 @@ export default function TodoTable() {
                         value={selectedDate}
                         onChange={(date: Date | null) => setSelectedDate(date)}
                         inputFormat="yyyy/MM/dd"
-                        renderInput={(params:any) => (
+                        renderInput={(params: any) => (
                           <TextField
                             {...params}
                             variant="standard"
@@ -206,13 +211,13 @@ export default function TodoTable() {
                     format(task.deadline, 'yyyy/MM/dd')
                   )}
                 </TableCell>
-                <TableCell className={classes.tagCell}>
-                {task.tags ? task.tags.map((tag, tagIndex) => (
-                  <span key={tagIndex} className={classes.tag}>
-                    {tag}
-                  </span>
-                )) : ""}
-              </TableCell>
+                <TagCell>
+                  {task.tags ? task.tags.map((tag, tagIndex) => (
+                    <Tag key={tagIndex}>
+                      {tag}
+                    </Tag>
+                  )) : ''}
+                </TagCell>
                 <TableCell align="center">
                   {editingIndex === index ? (
                     <Button
@@ -241,7 +246,7 @@ export default function TodoTable() {
             </TableRow>
           )}
         </TableBody>
-      </Table>
+      </TableWrapper>
       <Dialog open={openDeleteModal} onClose={handleCloseDeleteModal}>
         <DialogTitle>タスクの削除</DialogTitle>
         <DialogContent>

@@ -1,76 +1,68 @@
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import Box from '@material-ui/core/Box';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import { styled } from '@mui/system';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 import { useState } from 'react';
 import RegisterDialog from './RegisterDialog';
 import { useRecoilValue } from 'recoil';
-import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add';
+import Fab from '@mui/material/Fab';
+import AddIcon from '@mui/icons-material/Add';
 import TodoTable from './TodoTable';
 import { tasksState } from '../atoms/Tasks';
 
+const FabWrapper = styled(Fab)(({theme}) => ({
+  position: 'absolute',
+  bottom: '2rem',
+  right: '2rem',
+  '&:hover': {
+    backgroundColor: theme.palette.primary.main, // テーマのプライマリ色を使用
+  }
+}));
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    button: {
-      '&:hover': {
-        backgroundColor: '#6666ff'
-      }
-    },
-    fab: {
-      position: 'absolute',
-      bottom: '2rem',
-      right: '2rem',
-      '&:hover': {
-        backgroundColor: '#6666ff'
-      }
-    }
-  })
-);
+const ButtonWrapper = styled(Button)(({ theme }) => ({
+  '&:hover': {
+    backgroundColor: theme.palette.primary.main,
+  },
+}));
 
 export default function TodoList() {
-  const classes = useStyles();
+  //const classes = useStyles();
   const tasks = useRecoilValue(tasksState);
   const [open, setOpen] = useState<boolean>(false);
 
   const handleOpen = () => setOpen(true);
-
   const handleClose = () => setOpen(false);
-
 
   return (
     <>
-    <Box padding="2rem" textAlign="center">
-    {tasks.length !== 0 ? (
+      <Box padding="2rem" textAlign="center">
+        {tasks.length !== 0 ? (
           <>
             <TodoTable />
-            <Fab
-              className={classes.fab}
+            <FabWrapper
               onClick={handleOpen}
               color="primary"
               aria-label="add"
             >
               <AddIcon />
-            </Fab>
+            </FabWrapper>
           </>
         ) : (
           <>
-      <Typography variant="subtitle1" gutterBottom>
-        まだ登録されたタスクはありません。
-      </Typography>
-      <Button
-        className={classes.button}
-        onClick={handleOpen}
-        variant="contained"
-        color="primary"
-        >
-        タスクを登録する
-      </Button>
-      </>
+            <Typography variant="subtitle1" gutterBottom>
+              まだ登録されたタスクはありません。
+            </Typography>
+            <ButtonWrapper
+              onClick={handleOpen}
+              variant="contained"
+              color="primary"
+            >
+              タスクを登録する
+            </ButtonWrapper>
+          </>
         )}
-    </Box>
-    <RegisterDialog open={open} onClose={handleClose} />
+      </Box>
+      <RegisterDialog open={open} onClose={handleClose} />
     </>
   );
 }
