@@ -1,11 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace graduation3.Model
+namespace Fullstack_Minori.Model
 {
     public class User
-
-
     {
+
 
         [Key]
         public int Id { get; set; }
@@ -17,5 +16,6 @@ namespace graduation3.Model
         public string Email { get; set; }
 
         public string Password { get; set; }
+
     }
 }

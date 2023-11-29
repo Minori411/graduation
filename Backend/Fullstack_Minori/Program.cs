@@ -1,4 +1,4 @@
-using graduation3.Data;
+using Fullstack_Minori.Data;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

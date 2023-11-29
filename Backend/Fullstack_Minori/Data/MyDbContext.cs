@@ -1,16 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore;
-using graduation3.Model;
+﻿using Fullstack_Minori.Model;
+using Microsoft.EntityFrameworkCore;
 
-namespace graduation3.Data
+namespace Fullstack_Minori.Data
 {
+
     public class MyDbContext : DbContext
     {
         public MyDbContext(DbContextOptions<MyDbContext> options) : base(options) { }
 
-
         public DbSet<User> Users { get; set; }
+
+        public DbSet<Content> Contents { get; set; }
 
 
 
     }
 }
+
