@@ -1,7 +1,20 @@
 using Fullstack_Minori.Data;
 using Microsoft.EntityFrameworkCore;
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("https://localhost:44449",
+                                              "https://localhost:7256/swagger")
+                                .AllowAnyMethod()
+                                .AllowAnyHeader();
+                      });
+});
 
 // Add services to the container.
 builder.Services
@@ -22,6 +35,8 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseCors(MyAllowSpecificOrigins); // CORSポリシーを適用
 
 app.UseAuthorization();
 

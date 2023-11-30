@@ -7,7 +7,7 @@ namespace Fullstack_Minori.Model
 
 
         [Key]
-        public int Id { get; set; }
+        public Int32 PK { get; set; }
 
         public string FirstName { get; set; }
 
