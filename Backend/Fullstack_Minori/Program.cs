@@ -4,13 +4,15 @@ using Microsoft.EntityFrameworkCore;
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
 
+
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
                           policy.WithOrigins("https://localhost:44449",
-                                              "https://localhost:7256/swagger")
+                                              "https://localhost:7256")
                                 .AllowAnyMethod()
                                 .AllowAnyHeader();
                       });
