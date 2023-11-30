@@ -5,7 +5,7 @@
 // import TodoList from './components/TodoList';
 // import PasswordReset from './components/PasswordReset';
 // import { RecoilRoot } from 'recoil';
-// import ReactDOM from "react-dom";
+import ReactDOM from "react-dom";
 // import { createTheme, ThemeProvider } from '@mui/material/styles';
 // // import Home from './components/Home';
 // import TodoAppBar from './components/TodoAppBar'; // TodoAppBarをインポート
@@ -31,8 +31,7 @@
 //   );
 // }
 
-// const rootElement = document.getElementById("root")!;
-// ReactDOM.render(<App />, rootElement);
+
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -42,9 +41,9 @@ function App() {
 
     useEffect(() => {
         // C#のAPIエンドポイントにGETリクエストを送信
-        axios.get('/api/data')
+        axios.get('https://localhost:7256/api/data')
             .then((response) => {
-                setData(response.data.message);
+                setData(response.data);
             })
             .catch((error) => {
                 console.error(error);
@@ -59,3 +58,6 @@ function App() {
 }
 
 export default App;
+
+const rootElement = document.getElementById("root")!;
+ReactDOM.render(<App />, rootElement);
