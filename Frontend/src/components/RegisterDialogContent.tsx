@@ -108,14 +108,19 @@ const handleDetailChange = (
             fullWidth
           />
             <div>
-              {tags.map((tag, index) => (
-                <Chip
-                  key={index}
-                  label={tag}
-                  onDelete={() => handleDeleteTag(index)}
-                  style={{ marginRight: 8 }}
-                />
-              ))}
+            {Array.isArray(tags) &&
+                tags.map((tag, index) => (
+                  <Chip
+                    key={index}
+                    label={tag}
+                    onDelete={() => {
+                      setTags((prevTags) =>
+                        prevTags.filter((_, currentIndex) => currentIndex !== index)
+                      );
+                    }}
+                    style={{ marginRight: 8 }}
+                  />
+                ))}
             </div>
           </Grid>
         </Grid>
