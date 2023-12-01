@@ -17,6 +17,7 @@ import {
   taskContentState,
   taskDetailState,
   taskDeadlineState,
+  taskTagState
 } from '../atoms/RegisterDialogContent';
 
 
@@ -24,7 +25,8 @@ export default function RegisterDialogContent() {
   const setContent = useSetRecoilState(taskContentState);
   const setDetail = useSetRecoilState(taskDetailState);
   const [deadline, setDeadline] = useRecoilState(taskDeadlineState);
-  const [tags, setTags] = useState<string[]>([]);
+  const [tags, setTags] = useRecoilState(taskTagState);
+  const [tagInput, setTagInput] = useState('');
   const setTasks = useSetRecoilState(tasksState); 
 
   // handleContentChange関数の修正

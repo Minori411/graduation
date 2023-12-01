@@ -15,7 +15,7 @@ export const taskDeadlineState = atom<Date>({
   default: new Date()
 });
 
-export const tagstate = atom<string>({
-  key: 'tagstate',
-  default: ''
+export const taskTagState = atom<string>({
+  key: 'tagState',
+  default: ""
 });

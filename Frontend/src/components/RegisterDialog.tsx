@@ -12,15 +12,8 @@ import {
   taskContentState,
   taskDetailState,
   taskDeadlineState,
-  tagstate
+  taskTagState
 } from '../atoms/RegisterDialogContent';
-import { atom } from 'recoil';
-import { Task } from '../atoms/Tasks';
-
-export const taskCategoryState = atom<string>({
-  key: 'taskCategoryState',
-  default: '',
-});
 
 type Props = {
   open: boolean;
@@ -31,6 +24,7 @@ export default function RegisterDialog({ open, onClose }: Props) {
   const taskContent = useRecoilValue(taskContentState);
   const taskDetail = useRecoilValue(taskDetailState);
   const taskDeadline = useRecoilValue(taskDeadlineState);
+  const taskTag = useRecoilValue(taskTagState);
   const [tasks, setTasks] = useRecoilState(tasksState);
 
   const handleRegister = () => {
@@ -40,9 +34,10 @@ export default function RegisterDialog({ open, onClose }: Props) {
       detail: taskDetail,
       deadline: taskDeadline,
       isComplete: false,
+      tags: [taskTag]
     };
 
-    setTasks((prevTasks) => [...prevTasks, newTask] as Task[]);
+    setTasks((prevTasks) => [...prevTasks, newTask]);
     onClose();
   };
 

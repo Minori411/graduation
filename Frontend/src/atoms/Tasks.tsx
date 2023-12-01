@@ -11,5 +11,5 @@ export interface Task {
 
 export const tasksState = atom<Task[]>({
   key: 'tasksState',
-  default: [],
+  default: []
 });

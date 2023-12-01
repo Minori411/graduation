@@ -106,7 +106,7 @@
 
 import axios from 'axios';
 
-const BASE_URL = 'http://localhost:5000/api/tasks'; // バックエンドAPIのURL
+const BASE_URL = 'http://localhost:7256/api/tasks'; // バックエンドAPIのURL
 
 // タスク一覧を取得する関数
 export const getTasks = async () => {
