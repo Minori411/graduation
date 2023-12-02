@@ -7,7 +7,7 @@ import PasswordReset from './components/PasswordReset';
 import { RecoilRoot } from 'recoil';
 import ReactDOM from "react-dom";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-// import Home from './components/Home';
+import Home from './components/Home';
 import TodoAppBar from './components/TodoAppBar'; // TodoAppBarをインポート
 
 const theme = createTheme();
@@ -22,7 +22,7 @@ export default function App() {
             <Route path="/passwordreset" element={<PasswordReset />} />
             <Route path="/signup" element={<SignUppage />} />
             <Route path="/login" element={<LoginPage />} />
-            {/* <Route path="/" element={<Home />} /> */}
+            <Route path="/" element={<Home />} />
             <Route path="/register" element={<RecoilRoot><div className="App"><TodoList /></div></RecoilRoot>} />
           </Routes>
         </Suspense>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{ useEffect } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
@@ -28,6 +28,25 @@ export default function RegisterDialogContent() {
   const [tags, setTags] = useRecoilState(taskTagState);
   const [tagInput, setTagInput] = useState('');
   const setTasks = useSetRecoilState(tasksState); 
+
+  useEffect(() => {
+    fetch('https://localhost:7256/api/content')
+      .then(response => response.json())
+      .then(data => {
+        if (data.length > 0) {
+          const item = data[0];
+          setContent(item.content);
+          setDetail(item.detail);
+          setDeadline(item.deadline);
+          setTags(item.tags ? item.tags.split(',') : []);
+        }
+      })
+      .catch(error => {
+        // エラーハンドリング
+        console.error('Error fetching data: ', error);
+      });
+  }, []);
+
 
   // handleContentChange関数の修正
 // handleContentChange関数の修正
