@@ -1,10 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-// import SignInButton from './components/Login';
-import UserProfile from './components/Login';
-import WelcomeMessage from './components/WelcomeMessage';
+import LoginPage from './components/Login';
 import { Suspense } from 'react';
 import TodoList from './components/TodoList';
-import PasswordReset from './components/PasswordReset';
 import { RecoilRoot } from 'recoil';
 import createRoot from "react-dom";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -22,11 +19,8 @@ export default function App() {
       <Router>
         <Suspense fallback={<div>Loading...</div>}>
           <TodoAppBar />
-          <WelcomeMessage />
-          <Routes>
-            <Route path="/passwordreset" element={<PasswordReset />} />
-            
-            <Route path="/login" element={<UserProfile />} />
+          <Routes>        
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/" element={<Home />} />
             <Route path="/register" element={<RecoilRoot><div className="App"><TodoList /></div></RecoilRoot>} />
           </Routes>
