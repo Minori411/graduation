@@ -6,7 +6,7 @@ namespace Fullstack_Minori.Model
     {
 
         [Key]
-        public Int32 PK { get; set; }
+        public Int32 Id { get; set; }
         public string Task { get; set; }
         public string? Detail { get; set; }
         public DateTime Deadline { get; set; }

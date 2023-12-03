@@ -3,19 +3,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Fullstack_Minori.Controllers
 {
-
-    [Route("api/data")]
     [ApiController]
+    [Route("/api/data")]
     public class TestController : ControllerBase
     {
-        [EnableCors("MyAllowSpecificOrigins")]
         [HttpGet]
+        [EnableCors("_myAllowSpecificOrigins")]
         public IActionResult GetData()
         {
             // データを生成または取得するロジックを実装
             var data = "これはC#からのデータです";
 
-            return Ok(new { data });
+            return Ok(data);
         }
     }
 }

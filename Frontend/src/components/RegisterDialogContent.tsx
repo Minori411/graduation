@@ -22,12 +22,11 @@ import {
 
 
 export default function RegisterDialogContent() {
-  const setContent = useSetRecoilState(taskContentState);
-  const setDetail = useSetRecoilState(taskDetailState);
+  const [Task,setTask] = useRecoilState(taskContentState);
+  const [Detail,setDetail] = useRecoilState(taskDetailState);
   const [deadline, setDeadline] = useRecoilState(taskDeadlineState);
   const [tags, setTags] = useRecoilState(taskTagState);
   const [tagInput, setTagInput] = useState('');
-  const setTasks = useSetRecoilState(tasksState); 
 
   useEffect(() => {
     fetch('https://localhost:7256/api/content')
@@ -35,7 +34,7 @@ export default function RegisterDialogContent() {
       .then(data => {
         if (data.length > 0) {
           const item = data[0];
-          setContent(item.content);
+          setTask(item.content);
           setDetail(item.detail);
           setDeadline(item.deadline);
           setTags(item.tags ? item.tags.split(',') : []);
@@ -54,7 +53,7 @@ const handleContentChange = (
   e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
 ) => {
   const value = e.target.value;
-  setContent(value);
+  setTask(value);
 };
 
   // handleDetailChange関数の修正
@@ -95,6 +94,7 @@ const handleDetailChange = (
               margin="dense"
               id="name"
               label="内容"
+              value={Task}
               fullWidth
             />
             <TextField
@@ -102,11 +102,12 @@ const handleDetailChange = (
               margin="dense"
               id="detail"
               label="詳細"
+              value={Detail}
               fullWidth
             />
             <DatePicker
               disablePast
-              openTo="year"
+              // openTo="year"
               views={['day']}
               inputFormat="yyyy/MM/dd"
               label="期限"

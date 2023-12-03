@@ -2,7 +2,7 @@ import { atom } from 'recoil';
 
 export interface Task {
   id: number;
-  content: string;
+  task: string;
   detail: string;
   deadline: any;
   isComplete: boolean;

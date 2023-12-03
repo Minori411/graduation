@@ -1,33 +1,39 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LoginPage from './components/Login';
-import SignUppage from './components/SignUp';
+// import SignInButton from './components/Login';
+import UserProfile from './components/Login';
+import WelcomeMessage from './components/WelcomeMessage';
 import { Suspense } from 'react';
 import TodoList from './components/TodoList';
 import PasswordReset from './components/PasswordReset';
 import { RecoilRoot } from 'recoil';
-import ReactDOM from "react-dom";
+import createRoot from "react-dom";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Home from './components/Home';
 import TodoAppBar from './components/TodoAppBar'; // TodoAppBarをインポート
+import { MsalProvider } from "@azure/msal-react";
+import { msalInstance } from "./config/msalConfig";
 
 const theme = createTheme();
 
 export default function App() {
   return (
+    <MsalProvider instance={msalInstance}>
     <ThemeProvider theme={theme}>
       <Router>
         <Suspense fallback={<div>Loading...</div>}>
-          <TodoAppBar /> {/* TodoAppBarをルーティングの外に配置 */}
+          <TodoAppBar />
+          <WelcomeMessage />
           <Routes>
             <Route path="/passwordreset" element={<PasswordReset />} />
-            <Route path="/signup" element={<SignUppage />} />
-            <Route path="/login" element={<LoginPage />} />
+            
+            <Route path="/login" element={<UserProfile />} />
             <Route path="/" element={<Home />} />
             <Route path="/register" element={<RecoilRoot><div className="App"><TodoList /></div></RecoilRoot>} />
           </Routes>
         </Suspense>
       </Router>
     </ThemeProvider>
+    </MsalProvider>
   );
 }
 
@@ -60,4 +66,4 @@ export default function App() {
 // export default App;
 
 const rootElement = document.getElementById("root")!;
-ReactDOM.render(<App />, rootElement);
+createRoot.render(<App />, rootElement);

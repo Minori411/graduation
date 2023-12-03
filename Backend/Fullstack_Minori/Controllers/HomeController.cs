@@ -1,6 +1,6 @@
 ﻿namespace Fullstack_Minori.Controllers
 {
-    public class UserController
+    public class HomeController
     {
     }
 }

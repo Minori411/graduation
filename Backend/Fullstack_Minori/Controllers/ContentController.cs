@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Fullstack_Minori.Controllers
 {
     [ApiController]
-    [Route("api/content")]
+    [Route("/api/content")]
     public class ContentController : ControllerBase
     {
         private MyDbContext _context;
@@ -18,6 +18,7 @@ namespace Fullstack_Minori.Controllers
         [HttpGet]
         public IActionResult Get()
         {
+
             var contents = _context.Contents.ToList();
             return Ok(contents);
         }
@@ -47,13 +48,15 @@ namespace Fullstack_Minori.Controllers
         [HttpPut("{key}")]
         public IActionResult Put(int key, [FromBody] Content updatedContent) // リクエストボディからデシリアライズ
         {
-            var content = _context.Contents.FirstOrDefault(c => c.PK == key);
+            var content = _context.Contents.FirstOrDefault(c => c.Id == key);
 
             if (content == null)
             {
                 return NotFound();
             }
 
+
+            content.Id = updatedContent.Id;
             content.Task = updatedContent.Task;
             content.Detail = updatedContent.Detail;
             content.Deadline = updatedContent.Deadline;
@@ -81,7 +84,7 @@ namespace Fullstack_Minori.Controllers
         [HttpDelete("{key}")]
         public IActionResult Delete(int key)
         {
-            var content = _context.Contents.FirstOrDefault(c => c.PK == key);
+            var content = _context.Contents.FirstOrDefault(c => c.Id == key);
 
             if (content == null)
             {

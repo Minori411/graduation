@@ -1,49 +1,43 @@
 using Fullstack_Minori.Data;
 using Microsoft.EntityFrameworkCore;
 
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
 
+// Add services to the container.
+builder.Services.AddControllers();
 
-
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
-                      policy =>
-                      {
-                          policy.WithOrigins("https://localhost:44449",
-                                              "https://localhost:7256")
-                                .AllowAnyMethod()
-                                .AllowAnyHeader();
-                      });
+        policy =>
+        {
+            policy.WithOrigins("https://localhost:44449")
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
 });
 
-// Add services to the container.
-builder.Services
-    .AddRazorPages()
-    .AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
-
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<MyDbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default"))
-    );
+);
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
-app.UseStaticFiles();
 
-app.UseRouting();
-
-app.UseCors(MyAllowSpecificOrigins); // CORSポリシーを適用
-
+app.UseHttpsRedirection();
 app.UseAuthorization();
-
 app.MapControllers();
-app.MapDefaultControllerRoute();
-app.MapRazorPages();
+
+app.UseCors(MyAllowSpecificOrigins);
 
 app.Run();

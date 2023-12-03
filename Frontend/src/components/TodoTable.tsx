@@ -18,6 +18,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
+
+
 import { tasksState, Task } from '../atoms/Tasks';
 
 import { styled } from '@mui/system';
@@ -139,10 +141,16 @@ export default function TodoTable() {
                     onChange={() => handleCheck(index)}
                   />
                 </CompleteCell>
+                 {/* タスク内容のセル
+                {task.isComplete ? (
+                <CompletedTaskCell>{task.task}</CompletedTaskCell>
+              ) : (
+                <TableCell>{task.task}</TableCell>
+              )} */}
                 <TableCell>
                   {editingIndex === index ? (
                     <TextField
-                      value={task.content}
+                      value={task.task}
                       onChange={(e) => {
                         const updatedContent = e.target.value;
                         setTasks((prevTasks) => {
@@ -160,7 +168,9 @@ export default function TodoTable() {
                       }}
                     />
                   ) : (
-                    task.content
+                    
+                    task.task
+                    
                   )}
                 </TableCell>
                 <HorizontalTextCell>
@@ -186,6 +196,7 @@ export default function TodoTable() {
                   ) : (
                     task.detail
                   )}
+            
                 </HorizontalTextCell>
                 <TableCell>
                   {editingIndex === index ? (
@@ -222,7 +233,7 @@ export default function TodoTable() {
                     <Button
                       variant="contained"
                       color="primary"
-                      onClick={() => handleSave(index, task.content, task.detail, task.tags)}
+                      onClick={() => handleSave(index, task.task, task.detail, task.tags)}
                     >
                       保存
                     </Button>

@@ -30,7 +30,7 @@ export default function RegisterDialog({ open, onClose }: Props) {
   const handleRegister = () => {
     const newTask = {
       id: tasks.length + 1,
-      content: taskContent,
+      task: taskContent,
       detail: taskDetail,
       deadline: taskDeadline,
       isComplete: false,
