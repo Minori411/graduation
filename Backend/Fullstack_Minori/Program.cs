@@ -1,10 +1,17 @@
+using Fullstack_Minori.Authorization;
 using Fullstack_Minori.Data;
+using Fullstack_Minori.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+
+builder.Services.AddScoped<IMessageService, MessageService>();
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
@@ -16,6 +23,35 @@ builder.Services.AddCors(options =>
                 .AllowAnyMethod()
                 .AllowAnyHeader();
         });
+});
+
+builder.Host.ConfigureServices(services =>
+{
+    services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            var audience =
+                  builder.Configuration.GetValue<string>("AUTH0_AUDIENCE");
+
+            options.Authority =
+                  $"https://{builder.Configuration.GetValue<string>("AUTH0_DOMAIN")}/";
+            options.Audience = audience;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateAudience = true,
+                ValidateIssuerSigningKey = true
+            };
+        });
+
+    services.AddAuthorization(options =>
+    {
+        options.AddPolicy("read:admin-messages", policy =>
+        {
+            policy.Requirements.Add(new RbacRequirement("read:admin-messages"));
+        });
+    });
+
+    services.AddSingleton<IAuthorizationHandler, RbacHandler>();
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

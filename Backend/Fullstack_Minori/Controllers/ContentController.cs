@@ -45,7 +45,7 @@ namespace Fullstack_Minori.Controllers
             return Ok(newContent);
         }
 
-        [HttpPut("{key}")]
+        [HttpPut]
         public IActionResult Put(int key, [FromBody] Content updatedContent) // リクエストボディからデシリアライズ
         {
             var content = _context.Contents.FirstOrDefault(c => c.Id == key);

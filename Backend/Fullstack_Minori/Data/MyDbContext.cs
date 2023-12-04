@@ -12,6 +12,8 @@ namespace Fullstack_Minori.Data
 
         public DbSet<Content> Contents { get; set; }
 
+        public DbSet<Message> Messages { get; set; }
+
 
 
     }

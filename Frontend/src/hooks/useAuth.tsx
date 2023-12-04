@@ -11,6 +11,7 @@ function MyComponent() {
         account: accounts[0]
       }).then(response => {
         // トークンを使用してAPIリクエストを行う
+        alert(response.accessToken);
         fetch("https://localhost:7256", {
           headers: {
             Authorization: `Bearer ${response.accessToken}`

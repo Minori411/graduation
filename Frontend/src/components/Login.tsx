@@ -9,7 +9,7 @@ export default function LoginPage() {
   const handleLogin = () => {
     instance.loginPopup({ scopes: ["user.read"] })
       .then(response => {
-        console.log(response);
+        console.log(response.accessToken);
       })
       .catch(e => {
         console.error(e);
