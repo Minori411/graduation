@@ -1,28 +1,48 @@
+using dotenv.net;
 using Fullstack_Minori.Authorization;
 using Fullstack_Minori.Data;
+using Fullstack_Minori.Middlewares;
 using Fullstack_Minori.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
+
+builder.Host.ConfigureAppConfiguration((configBuilder) =>
+{
+    configBuilder.Sources.Clear();
+    DotEnv.Load();
+    configBuilder.AddEnvironmentVariables();
+});
+
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.AddServerHeader = false;
+});
+
+builder.Services.AddScoped<IMessageService, MessageService>();
 
 // Add services to the container.
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<IMessageService, MessageService>();
-
-var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-        policy =>
-        {
-            policy.WithOrigins("https://localhost:44449")
-                .AllowAnyMethod()
-                .AllowAnyHeader();
-        });
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins(
+            builder.Configuration.GetValue<string>("CLIENT_ORIGIN_URL"))
+            .WithHeaders(new string[] {
+                HeaderNames.ContentType,
+                HeaderNames.Authorization,
+            })
+            .WithMethods("GET")
+            .SetPreflightMaxAge(TimeSpan.FromSeconds(86400));
+    });
 });
 
 builder.Host.ConfigureServices(services =>
@@ -31,10 +51,10 @@ builder.Host.ConfigureServices(services =>
         .AddJwtBearer(options =>
         {
             var audience =
-                  builder.Configuration.GetValue<string>("AUTH0_AUDIENCE");
+                  builder.Configuration.GetValue<string>("ENTRA_AUDIENCE");
 
             options.Authority =
-                  $"https://{builder.Configuration.GetValue<string>("AUTH0_DOMAIN")}/";
+                  $"https://{builder.Configuration.GetValue<string>("ENTRA_DOMAIN")}/";
             options.Audience = audience;
             options.TokenValidationParameters = new TokenValidationParameters
             {
@@ -63,6 +83,24 @@ builder.Services.AddDbContext<MyDbContext>(
 
 var app = builder.Build();
 
+var requiredVars =
+    new string[] {
+          "PORT",
+          "CLIENT_ORIGIN_URL",
+          "ENTRA_DOMAIN",
+          "ENTRA_AUDIENCE",
+    };
+
+foreach (var key in requiredVars)
+{
+    var value = app.Configuration.GetValue<string>(key);
+
+    if (value == "" || value == null)
+    {
+        throw new Exception($"Config variable missing: {key}.");
+    }
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -70,10 +108,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-app.UseAuthorization();
-app.MapControllers();
+app.Urls.Add(
+    $"http://+:{app.Configuration.GetValue<string>("PORT")}");
 
-app.UseCors(MyAllowSpecificOrigins);
+app.UseErrorHandler();
+app.UseSecureHeaders();
+app.MapControllers();
+app.UseCors();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.Run();
