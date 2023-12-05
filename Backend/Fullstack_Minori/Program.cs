@@ -109,7 +109,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.Urls.Add(
-    $"http://+:{app.Configuration.GetValue<string>("PORT")}");
+    $"https://+:{app.Configuration.GetValue<string>("PORT")}");
 
 app.UseErrorHandler();
 app.UseSecureHeaders();
