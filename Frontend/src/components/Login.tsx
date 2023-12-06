@@ -1,6 +1,6 @@
-import React from 'react';
 import { useMsal } from "@azure/msal-react";
 import { Container, Box, Button, Typography, Paper } from '@mui/material';
+import MyComponent from '../hooks/useAuth';
 
 export default function LoginPage() {
   const { instance, accounts } = useMsal();
@@ -33,14 +33,18 @@ export default function LoginPage() {
                 Microsoft Entra IDを使用してログインしました。
               </Typography>
               <button onClick={handleLogout}>ログアウト</button>
+              <MyComponent/>
             </div>
           ) : (
             <Button variant="contained" color="primary" onClick={handleLogin}>
               ログイン
             </Button>
+            
           )}
+          
         </Box>
       </Paper>
     </Container>
+    
   );
 }

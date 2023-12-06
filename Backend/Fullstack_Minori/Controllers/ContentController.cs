@@ -1,5 +1,6 @@
 ﻿using Fullstack_Minori.Data;
 using Fullstack_Minori.Model;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Fullstack_Minori.Controllers
@@ -16,6 +17,7 @@ namespace Fullstack_Minori.Controllers
         }
 
         [HttpGet]
+        [EnableCors]
         public IActionResult Get()
         {
 
@@ -45,7 +47,7 @@ namespace Fullstack_Minori.Controllers
             return Ok(newContent);
         }
 
-        [HttpPut]
+        [HttpPut("{key}")]
         public IActionResult Put(int key, [FromBody] Content updatedContent) // リクエストボディからデシリアライズ
         {
             var content = _context.Contents.FirstOrDefault(c => c.Id == key);

@@ -56,6 +56,7 @@ builder.Host.ConfigureServices(services =>
             options.Authority =
                   $"https://{builder.Configuration.GetValue<string>("ENTRA_DOMAIN")}/";
             options.Audience = audience;
+            options.MetadataAddress = $"https://{builder.Configuration.GetValue<string>("ENTRA_DOMAIN")}/.well-known/openid-configuration";
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateAudience = true,

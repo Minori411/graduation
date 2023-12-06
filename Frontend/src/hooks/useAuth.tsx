@@ -1,37 +1,45 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { useMsal } from "@azure/msal-react";
+import { Button } from '@mui/material';
+import axios from 'axios';
+
+const apiEndpoint = 'https://localhost:7256/api/messages/protected';
 
 function MyComponent() {
-  const { instance, accounts } = useMsal();
+    const [data, setData] = useState('');
+    const { instance, accounts } = useMsal();
 
-  useEffect(() => {
-    if (accounts.length > 0) {
-      instance.acquireTokenSilent({
-        scopes: ["user.read"],
-        account: accounts[0]
-      }).then(response => {
-        // トークンを使用してAPIリクエストを行う
-        alert(response.accessToken);
-        fetch("https://localhost:7256", {
-          headers: {
-            Authorization: `Bearer ${response.accessToken}`
-          }
-        })
-        .then(response => response.json())
-        .then(data => {
-          console.log(data);
-        })
-        .catch(error => {
-          console.error(error);
+    const fetchData = () => {
+        const request = {
+            scopes: ["user.read"], // 必要なスコープを設定
+            account: accounts[0]
+        };
+
+        instance.acquireTokenSilent(request).then(response => {
+            const headers = {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Authorization': `Bearer ${response.accessToken}`
+            }
+
+            fetch(apiEndpoint, {
+                    method: "GET",
+                    headers: headers
+
+                }).then(response => {
+                    // このブロックの中ではPromiseではなくて、通常の値として扱える
+                    console.log(response);
+                    return response; // returnしてもPromiseに包まれる
+                }).catch(error => {
+                    console.log(error);
+                });
+
+
+        }).catch(error => {
+            console.error(error);
         });
-      }).catch(error => {
-        // トークン取得エラーのハンドリング
-        console.error(error);
-      });
-    }
-  }, [instance, accounts]); // 依存配列にinstanceとaccountsを追加
+    };
 
-  return <div>コンテンツ</div>;
+    return <Button onClick={fetchData}>コンテンツ</Button>;
 }
 
 export default MyComponent;

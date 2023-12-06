@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Fullstack_Minori.Controllers.Authorize
 {
     [ApiController]
-    [Route("api/messages")]
+    [Route("/api/messages")]
     public class MessagesController : ControllerBase
     {
         private readonly IMessageService _messageService;
@@ -25,6 +25,7 @@ namespace Fullstack_Minori.Controllers.Authorize
 
         [HttpGet("protected")]
         [Authorize]
+
         public ActionResult<Message> GetProtectedMessage()
         {
             return _messageService.GetProtectedMessage();

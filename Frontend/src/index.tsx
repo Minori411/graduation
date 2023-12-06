@@ -3,12 +3,13 @@ import LoginPage from './components/Login';
 import { Suspense } from 'react';
 import TodoList from './components/TodoList';
 import { RecoilRoot } from 'recoil';
-import createRoot from "react-dom";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Home from './components/Home';
 import TodoAppBar from './components/TodoAppBar'; // TodoAppBarをインポート
 import { MsalProvider } from "@azure/msal-react";
 import { msalInstance } from "./config/msalConfig";
+import ReactDOM from 'react-dom/client';
+import React from 'react';
 
 const theme = createTheme();
 
@@ -28,8 +29,8 @@ export default function App() {
       </Router>
     </ThemeProvider>
     </MsalProvider>
-  );
-}
+   );
+ }
 
 
 
@@ -59,5 +60,11 @@ export default function App() {
 
 // export default App;
 
-const rootElement = document.getElementById("root")!;
-createRoot.render(<App />, rootElement);
+const rootElement = document.getElementById('root');
+
+if (rootElement) {
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(<App />);
+} else {
+    console.error('ルート要素が見つかりません。');
+}
