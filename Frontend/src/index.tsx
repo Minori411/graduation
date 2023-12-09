@@ -38,6 +38,7 @@ if (rootElement !== null) {
         <ThemeProvider theme={theme}>
           <Router>
             <App />
+            
           </Router>
         </ThemeProvider>
       </MsalProvider>
