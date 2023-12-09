@@ -1,70 +1,50 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LoginPage from './components/Login';
-import { Suspense } from 'react';
-import TodoList from './components/TodoList';
-import { RecoilRoot } from 'recoil';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Home from './components/Home';
-import TodoAppBar from './components/TodoAppBar'; // TodoAppBarをインポート
-import { MsalProvider } from "@azure/msal-react";
-import { msalInstance } from "./config/msalConfig";
-import ReactDOM from 'react-dom/client';
 import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter as Router } from 'react-router-dom';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { MsalProvider } from "@azure/msal-react";
+import { PublicClientApplication } from "@azure/msal-browser";
+import axios from "axios";
+import { msalConfig, loginApiRequest } from "./config/authConfig";
+import 'bulma/css/bulma.min.css';
+import App from './App'; // App コンポーネントをインポート
+import reportWebVitals from './reportWebVitals'; 
 
+const msalInstance = new PublicClientApplication(msalConfig);
 const theme = createTheme();
 
-export default function App() {
-  return (
-    <MsalProvider instance={msalInstance}>
-    <ThemeProvider theme={theme}>
-      <Router>
-        <Suspense fallback={<div>Loading...</div>}>
-          <TodoAppBar />
-          <Routes>        
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/" element={<Home />} />
-            <Route path="/register" element={<RecoilRoot><div className="App"><TodoList /></div></RecoilRoot>} />
-          </Routes>
-        </Suspense>
-      </Router>
-    </ThemeProvider>
-    </MsalProvider>
-   );
- }
-
-
-
-// import React, { useState, useEffect } from 'react';
-// import axios from 'axios';
-
-// function App() {
-//     const [data, setData] = useState('');
-
-//     useEffect(() => {
-//         // C#のAPIエンドポイントにGETリクエストを送信
-//         axios.get('https://localhost:7256/api/data')
-//             .then((response) => {
-//                 setData(response.data);
-//             })
-//             .catch((error) => {
-//                 console.error(error);
-//             });
-//     }, []);
-
-//     return (
-//         <div>
-//             <p>Data from C#: {data}</p>
-//         </div>
-//     );
-// }
-
-// export default App;
+axios.defaults.baseURL = "https://localhost:7256/api/";
+axios.interceptors.request.use(
+  async (response) => {
+    const account = msalInstance.getAllAccounts()[0];
+    const msalResponse = await msalInstance.acquireTokenSilent({
+      ...loginApiRequest,
+      account: account,
+    });
+    response.headers.common.Authorization = `Bearer ${msalResponse.accessToken}`;
+    return response;
+  },
+  (err) => {
+    return Promise.reject(err);
+  }
+);
 
 const rootElement = document.getElementById('root');
-
-if (rootElement) {
-    const root = ReactDOM.createRoot(rootElement);
-    root.render(<App />);
+if (rootElement !== null) {
+  const root = ReactDOM.createRoot(rootElement);
+  root.render(
+    <React.StrictMode>
+      <MsalProvider instance={msalInstance}>
+        <ThemeProvider theme={theme}>
+          <Router>
+            <App />
+          </Router>
+        </ThemeProvider>
+      </MsalProvider>
+    </React.StrictMode>
+  );
 } else {
-    console.error('ルート要素が見つかりません。');
+  console.error('ルート要素が見つかりません。');
 }
+
+reportWebVitals(console.log);

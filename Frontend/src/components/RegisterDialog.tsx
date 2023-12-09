@@ -8,6 +8,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import RegisterDialogContent from './RegisterDialogContent';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { tasksState } from '../atoms/Tasks';
+import axios from 'axios';
 import {
   taskContentState,
   taskDetailState,
@@ -37,8 +38,23 @@ export default function RegisterDialog({ open, onClose }: Props) {
       tags: [taskTag]
     };
 
-    setTasks((prevTasks) => [...prevTasks, newTask]);
-    onClose();
+    axios.post('https://localhost:7256/api/content', newTask, {
+      headers: {
+        'Content-Type': 'application/json' // Content-Typeを設定
+      }
+    })
+      .then(response => {
+        console.log('タスクが正常に登録されました:', response);
+
+        // レスポンスに基づいてフロントエンドの状態を更新
+        setTasks((prevTasks) => [...prevTasks, response.data]);
+
+        onClose(); // ダイアログを閉じる
+      })
+      .catch(error => {
+        console.error('タスク登録中にエラーが発生しました:', error);
+        // エラー処理を行う
+      });
   };
 
   return (

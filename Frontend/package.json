@@ -13,6 +13,7 @@
     "@mui/x-date-pickers": "^5.0.20",
     "axios": "^1.6.2",
     "bootstrap": "^5.2.3",
+    "bulma": "^0.9.4",
     "chart.js": "^4.4.0",
     "date-fns": "^2.30.0",
     "http-proxy-middleware": "^2.0.6",

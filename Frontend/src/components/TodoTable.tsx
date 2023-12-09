@@ -221,13 +221,13 @@ export default function TodoTable() {
                     format(task.deadline, 'yyyy/MM/dd')
                   )}
                 </TableCell>
-                <TagCell>
+                <TableCell>
                   {task.tags ? task.tags.map((tag, tagIndex) => (
                     <Tag key={tagIndex}>
                       {tag}
                     </Tag>
                   )) : ''}
-                </TagCell>
+                </TableCell>
                 <TableCell align="center">
                   {editingIndex === index ? (
                     <Button

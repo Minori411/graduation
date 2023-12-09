@@ -28,26 +28,9 @@ export default function RegisterDialogContent() {
   const [tags, setTags] = useRecoilState(taskTagState);
   const [tagInput, setTagInput] = useState('');
 
-  useEffect(() => {
-    fetch('https://localhost:7256/api/content')
-      .then(response => response.json())
-      .then(data => {
-        if (data.length > 0) {
-          const item = data[0];
-          setTask(item.content);
-          setDetail(item.detail);
-          setDeadline(item.deadline);
-          setTags(item.tags ? item.tags.split(',') : []);
-        }
-      })
-      .catch(error => {
-        // エラーハンドリング
-        console.error('Error fetching data: ', error);
-      });
-  }, []);
+  
 
 
-  // handleContentChange関数の修正
 // handleContentChange関数の修正
 const handleContentChange = (
   e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
@@ -71,17 +54,14 @@ const handleDetailChange = (
     }
   };
 
-  // タグが追加されたとき
-  const handleAddTag = (value: string) => {
-    if (value.trim() !== '') {
-      setTags((prevTags) => [...prevTags, value.trim()]);
-    }
+
+  const handleChangeTag = (
+    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
+  ) => {
+    const value = e.target.value;
+    setTags(value);
   };
 
-  // タグが削除されたとき
-  const handleDeleteTag = (index: number) => {
-    setTags((prevTags) => prevTags.filter((_, i) => i !== index));
-  };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -119,29 +99,9 @@ const handleDetailChange = (
             />
             <TextField
             label="タグを追加"
-            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-              if (e.key === 'Enter') {
-                handleAddTag(e.currentTarget.value);
-                e.currentTarget.value = '';
-              }
-            }}
+            onChange={handleChangeTag}
             fullWidth
           />
-            <div>
-            {Array.isArray(tags) &&
-                tags.map((tag, index) => (
-                  <Chip
-                    key={index}
-                    label={tag}
-                    onDelete={() => {
-                      setTags((prevTags) =>
-                        prevTags.filter((_, currentIndex) => currentIndex !== index)
-                      );
-                    }}
-                    style={{ marginRight: 8 }}
-                  />
-                ))}
-            </div>
           </Grid>
         </Grid>
       </DialogContent>

@@ -1,22 +1,24 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Web.Resource;
 
 
 namespace Fullstack_Minori.Controllers
 {
-    [Route("/api/[controller]")]
+    [Route("/api/Employees")]
     [ApiController]
 
     [RequiredScope(RequiredScopesConfigurationKey = "AzureAd:scopes")]
 
-    public class MessasgeController : ControllerBase
+    public class EmployeesController : ControllerBase
     {
         private static readonly string[] Employees = new[] { "Minori Hayashi" };
 
 
         [Authorize(Roles = "Admin")]
         [HttpGet("employees")] // Add this
+        [EnableCors("CorsPolicy")]
         public IActionResult GetEmployees()
         {
             return Ok(Employees);
@@ -24,6 +26,7 @@ namespace Fullstack_Minori.Controllers
 
         [Authorize] // Add this
         [HttpGet("total-employees")]
+        [EnableCors("CorsPolicy")]
         public IActionResult TotalEmployees()
         {
             return Ok(Employees.Length);

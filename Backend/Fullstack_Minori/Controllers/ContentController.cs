@@ -17,7 +17,7 @@ namespace Fullstack_Minori.Controllers
         }
 
         [HttpGet]
-        [EnableCors]
+        [EnableCors("CorsPolicy")]
         public IActionResult Get()
         {
 
@@ -26,6 +26,7 @@ namespace Fullstack_Minori.Controllers
         }
 
         [HttpPost]
+        [EnableCors("CorsPolicy")]
         public IActionResult Post([FromBody] Content newContent) // リクエストボディからデシリアライズ
         {
             if (!ModelState.IsValid)
@@ -48,6 +49,7 @@ namespace Fullstack_Minori.Controllers
         }
 
         [HttpPut("{key}")]
+        [EnableCors("CorsPolicy")]
         public IActionResult Put(int key, [FromBody] Content updatedContent) // リクエストボディからデシリアライズ
         {
             var content = _context.Contents.FirstOrDefault(c => c.Id == key);
@@ -84,6 +86,7 @@ namespace Fullstack_Minori.Controllers
         }
 
         [HttpDelete("{key}")]
+        [EnableCors("CorsPolicy")]
         public IActionResult Delete(int key)
         {
             var content = _context.Contents.FirstOrDefault(c => c.Id == key);

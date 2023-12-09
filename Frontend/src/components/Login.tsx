@@ -1,50 +1,13 @@
 import { useMsal } from "@azure/msal-react";
-import { Container, Box, Button, Typography, Paper } from '@mui/material';
-import MyComponent from '../hooks/useAuth';
+import { loginApiRequest } from "../config/authConfig";
 
-export default function LoginPage() {
-  const { instance, accounts } = useMsal();
-  const user = accounts.length > 0 ? accounts[0] : null;
+export const SignInButton = () => {
+  const { instance } = useMsal();
 
   const handleLogin = () => {
-    instance.loginPopup({ scopes: ["user.read"] })
-      .then(response => {
-        console.log(response.accessToken);
-      })
-      .catch(e => {
-        console.error(e);
-      });
+    instance.loginRedirect(loginApiRequest).catch((e) => {
+      console.log(e);
+    });
   };
-
-  const handleLogout = () => {
-    instance.logoutPopup();
-  };
-
-  return (
-    <Container maxWidth="sm">
-      <Paper elevation={3} style={{ padding: '20px', marginTop: '50px', textAlign: 'center' }}>
-        <Box my={2}>
-          {user ? (
-            <div>
-              <Typography variant="h5" gutterBottom>
-                ようこそ、{user.name}さん！
-              </Typography>
-              <Typography variant="body1">
-                Microsoft Entra IDを使用してログインしました。
-              </Typography>
-              <button onClick={handleLogout}>ログアウト</button>
-              <MyComponent/>
-            </div>
-          ) : (
-            <Button variant="contained" color="primary" onClick={handleLogin}>
-              ログイン
-            </Button>
-            
-          )}
-          
-        </Box>
-      </Paper>
-    </Container>
-    
-  );
-}
+  return <button onClick={handleLogin}>Sign In</button>;
+};
