@@ -9,6 +9,7 @@ import { msalConfig, loginApiRequest } from "./config/authConfig";
 import 'bulma/css/bulma.min.css';
 import App from './App'; // App コンポーネントをインポート
 import reportWebVitals from './reportWebVitals'; 
+import { RecoilRoot } from 'recoil';
 
 const msalInstance = new PublicClientApplication(msalConfig);
 const theme = createTheme();
@@ -36,10 +37,11 @@ if (rootElement !== null) {
     <React.StrictMode>
       <MsalProvider instance={msalInstance}>
         <ThemeProvider theme={theme}>
-          <Router>
-            <App />
-            
-          </Router>
+          <RecoilRoot>
+            <Router>
+              <App /> 
+            </Router>
+          </RecoilRoot>
         </ThemeProvider>
       </MsalProvider>
     </React.StrictMode>
