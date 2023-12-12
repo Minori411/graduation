@@ -42,7 +42,7 @@ namespace Fullstack_Minori.Migrations
                     b.Property<string>("Tags")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Task")
+                    b.Property<string>("task")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -51,29 +51,13 @@ namespace Fullstack_Minori.Migrations
                     b.ToTable("Contents");
                 });
 
-            modelBuilder.Entity("Fullstack_Minori.Model.Message", b =>
+            modelBuilder.Entity("Fullstack_Minori.Model.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("text")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Messages");
-                });
-
-            modelBuilder.Entity("Fullstack_Minori.Model.User", b =>
-                {
-                    b.Property<int>("PK")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PK"), 1L, 1);
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -91,7 +75,7 @@ namespace Fullstack_Minori.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("PK");
+                    b.HasKey("Id");
 
                     b.ToTable("Users");
                 });

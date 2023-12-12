@@ -8,7 +8,7 @@ namespace Fullstack_Minori.Controllers
     public class TestController : ControllerBase
     {
         [HttpGet]
-        [EnableCors("CorsPolicy")]
+        [EnableCors("_myAllowSpecificOrigins")]
         public IActionResult GetData()
         {
             // データを生成または取得するロジックを実装
