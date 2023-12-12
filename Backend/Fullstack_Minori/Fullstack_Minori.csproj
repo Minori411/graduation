@@ -23,6 +23,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Model\Message.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="dotenv.net" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.20" />
