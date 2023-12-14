@@ -13,7 +13,7 @@ namespace Fullstack_Minori.Controllers
 
     public class EmployeesController : ControllerBase
     {
-        private static readonly string[] Employees = new[] { "Minori Hayashi" };
+        private static readonly string[] Employees = new[] { "Minori Hayashi", "Hatasako", "Minori", "Hiroko" };
 
 
         [Authorize(Roles = "Admin")]

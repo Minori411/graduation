@@ -1,4 +1,4 @@
-import { LogLevel, PublicClientApplication } from "@azure/msal-browser";
+import { LogLevel } from "@azure/msal-browser";
 import { msalInstance } from "../index";
 
 

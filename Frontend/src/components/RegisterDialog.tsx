@@ -16,6 +16,8 @@ import {
   taskTagState
 } from '../atoms/RegisterDialogContent';
 
+// 適切なパスに修正してください
+
 type Props = {
   open: boolean;
   onClose: () => void;
@@ -28,33 +30,33 @@ export default function RegisterDialog({ open, onClose }: Props) {
   const taskTag = useRecoilValue(taskTagState);
   const [tasks, setTasks] = useRecoilState(tasksState);
 
-  const handleRegister = () => {
-    const newTask = {
-      id: tasks.length + 1,
-      task: taskContent,
-      detail: taskDetail,
-      deadline: taskDeadline,
-      isComplete: false,
-      tags: [taskTag]
-    };
+  const handleRegister = async () => {
+    try {
+       // トークン取得
 
-    axios.post('https://localhost:7256/api/content', newTask, {
-      headers: {
-        'Content-Type': 'application/json' // Content-Typeを設定
-      }
-    })
-      .then(response => {
-        console.log('タスクが正常に登録されました:', response);
+      const newTask = {
+        id: Date.now(), // 一時的なユニークID生成
+        task: taskContent,
+        detail: taskDetail,
+        deadline: taskDeadline,
+        isComplete: false,
+        tags: [taskTag]
+      };
 
-        // レスポンスに基づいてフロントエンドの状態を更新
-        setTasks((prevTasks) => [...prevTasks, response.data]);
-
-        onClose(); // ダイアログを閉じる
-      })
-      .catch(error => {
-        console.error('タスク登録中にエラーが発生しました:', error);
-        // エラー処理を行う
+      const response = await axios.post('content', newTask, {
+        headers: {
+          'Content-Type': 'application/json',
+        }
       });
+
+      console.log('タスクが正常に登録されました:', response);
+      setTasks((prevTasks) => [...prevTasks, response.data]);
+      onClose(); // ダイアログを閉じる
+
+    } catch (error) {
+      console.error('タスク登録中にエラーが発生しました:', error);
+      alert('タスク登録中にエラーが発生しました。'); // ユーザーへの通知
+    }
   };
 
   return (
