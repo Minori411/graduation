@@ -10,25 +10,30 @@ import 'bulma/css/bulma.min.css';
 import App from './App'; // App コンポーネントをインポート
 import reportWebVitals from './reportWebVitals'; 
 import { RecoilRoot } from 'recoil';
+import { getToken } from "./config/authConfig"
 
-const msalInstance = new PublicClientApplication(msalConfig);
+
+export const msalInstance = new PublicClientApplication(msalConfig);
 const theme = createTheme();
 
 axios.defaults.baseURL = "https://localhost:7256/api/";
-axios.interceptors.request.use(
-  async (response) => {
-    const account = msalInstance.getAllAccounts()[0];
-    const msalResponse = await msalInstance.acquireTokenSilent({
-      ...loginApiRequest,
-      account: account,
-    });
-    response.headers.common.Authorization = `Bearer ${msalResponse.accessToken}`;
-    return response;
-  },
-  (err) => {
-    return Promise.reject(err);
+axios.interceptors.request.use(async (config) => {
+  // トークンを取得
+  const token = await getToken();
+
+  // configオブジェクトが存在し、headersプロパティが定義されていることを確認
+  if (config && config.headers) {
+    // Authorizationヘッダーを設定
+    config.headers.Authorization = `Bearer ${token}`;
   }
-);
+
+  return config;
+}, (error) => {
+  // リクエストエラーのハンドリング
+  return Promise.reject(error);
+});
+
+
 
 const rootElement = document.getElementById('root');
 if (rootElement !== null) {

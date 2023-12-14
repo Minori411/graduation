@@ -1,14 +1,24 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
+import { AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from "@azure/msal-react";
 import { SignInButton } from "./components/Login";
 import { SignOutButton } from "./components/Logout";
-import{ Employee } from "./components/Employee";
+import { Employee } from "./components/Employee";
 import TodoAppBar from './components/TodoAppBar';
 import Home from './components/Home';
-import TodoList from './components/TodoList'; // TodoListコンポーネントをインポート
+import TodoList from './components/TodoList'; 
+import { PublicClientApplication } from "@azure/msal-browser";
+import { msalConfig } from "./config/authConfig"; 
 
 function App() {
+  const { instance } = useMsal();
+
+  useEffect(() => {
+    const accounts = instance.getAllAccounts();
+    if (accounts.length > 0) {
+      instance.setActiveAccount(accounts[0]);
+    }
+  }, [instance]);
   return (
     <div>
       <section className="section">

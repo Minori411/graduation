@@ -1,32 +1,61 @@
 import axios from "axios";
 import { useState } from "react";
+import getToken from "../config/authConfig";
+
+
 export const Employee = () => {
   const [employees, setEmployees] = useState<string[]>([]);
 
   const getEmployees = () => {
-    axios
-      .get("employees/")
+    getToken().then(accessToken => {
+      axios.get("Employees/employees/", {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      })
       .then((response) => {
         setEmployees(response.data);
       })
       .catch((error) => {
-        if (error.response.status === 403) {
-          alert("Your access is not allowed.");
-        }
+        // エラーハンドリング
+        handleApiError(error);
       });
+    });
   };
 
   const getTotalEmployees = () => {
-    axios
-      .get("employees/total-employees")
+    getToken().then(accessToken => {
+      axios.get("Employees/total-employees", {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      })
       .then((response) => {
         alert(`The total employees: ${response.data}`);
       })
       .catch((error) => {
-        if (error.response.statusCode === 401) {
-          alert("Unauthorized");
-        }
+        // エラーハンドリング
+        handleApiError(error);
       });
+    });
+  };
+
+  const handleApiError = (error) => {
+    if (error.response) {
+      // HTTPエラーの処理
+      if (error.response.status === 403) {
+        alert("Your access is not allowed.");
+      } else if (error.response.status === 401) {
+        alert("Unauthorized");
+      }
+      // 他のステータスコードの処理もここに追加
+    } else if (error.request) {
+      // リクエストはされたがレスポンスがない場合
+      alert("No response from the server.");
+    } else {
+      // リクエスト設定時のエラー
+      console.log("Error: " + error.message);
+    }
   };
 
   return (
@@ -38,9 +67,9 @@ export const Employee = () => {
         Get Total Employees
       </button>
       <ol>
-        {employees.map((d: string, index: number) => {
-          return <li key={index}>{d}</li>;
-        })}
+        {employees.map((employee, index) => (
+          <li key={index}>{employee}</li>
+        ))}
       </ol>
     </div>
   );
