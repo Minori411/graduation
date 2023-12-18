@@ -53,6 +53,7 @@ const Tag = styled('span')({
 export default function TodoTable() {
   const [tasks, setTasks] = useRecoilState<Task[]>(tasksState);
   const [editingIndex, setEditingIndex] = useState<number>(-1);
+  const [editingTags, setEditingTags] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
   const [confirmDelete, setConfirmDelete] = useState<(() => void) | null>(null);
@@ -75,6 +76,7 @@ export default function TodoTable() {
   const handleEdit = (index: number) => {
     setEditingIndex(index);
     setSelectedDate(tasks[index].deadline);
+    setEditingTags(tasks[index].tags); 
   };
 
   const handleSave = (index: number, updatedContent: string, updatedDetail: string, updatedTags: string) => {
@@ -219,7 +221,14 @@ export default function TodoTable() {
                    
                 </TableCell>
                 <TableCell>
-                  {task.tags ? <Tag>{task.tags}</Tag> : ''}
+                {editingIndex === index ? (
+                  <TextField
+                    value={editingTags}
+                    onChange={(e) => setEditingTags(e.target.value)}
+                  />
+                ) : (
+                  <Tag>{task.tags}</Tag> 
+                  )}
                 </TableCell>
                 <TableCell align="center">
                   {editingIndex === index ? (
