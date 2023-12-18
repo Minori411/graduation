@@ -58,6 +58,7 @@ export default function TodoTable() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
   const [confirmDelete, setConfirmDelete] = useState<(() => void) | null>(null);
+  const [editingContent, setEditingContent] = useState<string>(''); //
 
   const handleCheck = (index: number) => {
     setTasks((prevTasks) => {
@@ -78,24 +79,52 @@ export default function TodoTable() {
     setEditingIndex(index);
     setSelectedDate(tasks[index].deadline);
     setEditingTags(tasks[index].tags); 
+    setEditingContent(tasks[index].task);
   };
 
-  const handleSave = (index: number, updatedContent: string, updatedDetail: string, updatedTags: string) => {
-    setTasks((prevTasks) => {
-      const updatedTasks = prevTasks.map((task, i) => {
-        if (i === index) {
-          return {
-            ...task,
-            content: updatedContent,
-            detail: updatedDetail,
-            deadline: selectedDate,
-            tags: updatedTags,
-          };
-        }
-        return task;
+  async function updateTaskInDatabase(task) {
+    const accessToken = await getToken();
+    try {
+      const response = await fetch(`https://localhost:7256/api/content/${task.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify(task)
       });
-      return updatedTasks;
-    });
+  
+      if (!response.ok) {
+        throw new Error('Failed to update task');
+      }
+      return true;
+    } catch (error) {
+      console.error('Error updating task:', error);
+      return false;
+    }
+  }
+  
+  const handleSave = async (index: number, updatedContent: string, updatedDetail: string, updatedTags: string) => {
+    const updatedTask = {
+      ...tasks[index],
+      content: editingContent,
+      detail: updatedDetail,
+      deadline: selectedDate,
+      tags: updatedTags,
+    };
+  
+    const isUpdated = await updateTaskInDatabase(updatedTask);
+    if (isUpdated) {
+      setTasks((prevTasks) => {
+        const updatedTasks = prevTasks.map((task, i) => {
+          if (i === index) {
+            return updatedTask;
+          }
+          return task;
+        });
+        return updatedTasks;
+      });
+    }
     setEditingIndex(-1);
   };
 
@@ -136,9 +165,6 @@ export default function TodoTable() {
     setOpenDeleteModal(false);
   };
 
-  const handleCloseDeleteModal = () => {
-    setOpenDeleteModal(false);
-  };
 
   if (!tasks) {
     setTasks([]);
