@@ -15,6 +15,7 @@ import {
   taskDeadlineState,
   taskTagState
 } from '../atoms/RegisterDialogContent';
+import { getToken } from '../config/authConfig';
 
 // 適切なパスに修正してください
 
@@ -29,23 +30,25 @@ export default function RegisterDialog({ open, onClose }: Props) {
   const taskDeadline = useRecoilValue(taskDeadlineState);
   const taskTag = useRecoilValue(taskTagState);
   const [tasks, setTasks] = useRecoilState(tasksState);
+ 
 
   const handleRegister = async () => {
     try {
-       // トークン取得
 
-      const newTask = {
-        id: Date.now(), // 一時的なユニークID生成
+      const accessToken = await getToken();
+
+      const newTask = { 
         task: taskContent,
         detail: taskDetail,
         deadline: taskDeadline,
         isComplete: false,
-        tags: [taskTag]
+        tags: taskTag
       };
 
       const response = await axios.post('content', newTask, {
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
         }
       });
 

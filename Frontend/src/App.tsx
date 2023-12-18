@@ -7,8 +7,6 @@ import { Employee } from "./components/Employee";
 import TodoAppBar from './components/TodoAppBar';
 import Home from './components/Home';
 import TodoList from './components/TodoList'; 
-import { PublicClientApplication } from "@azure/msal-browser";
-import { msalConfig } from "./config/authConfig"; 
 
 function App() {
   const { instance } = useMsal();

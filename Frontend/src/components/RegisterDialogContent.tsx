@@ -61,7 +61,7 @@ const handleDetailChange = (
     const value = e.target.value;
     setTags(value);
   };
-
+  console.log(deadline);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -85,9 +85,9 @@ const handleDetailChange = (
               value={Detail}
               fullWidth
             />
+           
             <DatePicker
               disablePast
-              // openTo="year"
               views={['day']}
               inputFormat="yyyy/MM/dd"
               label="期限"

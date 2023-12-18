@@ -77,7 +77,7 @@ export default function TodoTable() {
     setSelectedDate(tasks[index].deadline);
   };
 
-  const handleSave = (index: number, updatedContent: string, updatedDetail: string, updatedTags: string[]) => {
+  const handleSave = (index: number, updatedContent: string, updatedDetail: string, updatedTags: string) => {
     setTasks((prevTasks) => {
       const updatedTasks = prevTasks.map((task, i) => {
         if (i === index) {
@@ -141,12 +141,6 @@ export default function TodoTable() {
                     onChange={() => handleCheck(index)}
                   />
                 </CompleteCell>
-                 {/* タスク内容のセル
-                {task.isComplete ? (
-                <CompletedTaskCell>{task.task}</CompletedTaskCell>
-              ) : (
-                <TableCell>{task.task}</TableCell>
-              )} */}
                 <TableCell>
                   {editingIndex === index ? (
                     <TextField
@@ -206,7 +200,8 @@ export default function TodoTable() {
                         value={selectedDate}
                         onChange={(date: Date | null) => setSelectedDate(date)}
                         inputFormat="yyyy/MM/dd"
-                        renderInput={(params: any) => (
+
+                        renderInput={(params) => (
                           <TextField
                             {...params}
                             variant="standard"
@@ -218,15 +213,13 @@ export default function TodoTable() {
                       />
                     </LocalizationProvider>
                   ) : (
-                    format(task.deadline, 'yyyy/MM/dd')
+                 task.deadline ? format(new Date(task.deadline), 'yyyy/MM/dd') : '日付なし'
+                   
                   )}
+                   
                 </TableCell>
                 <TableCell>
-                  {task.tags ? task.tags.map((tag, tagIndex) => (
-                    <Tag key={tagIndex}>
-                      {tag}
-                    </Tag>
-                  )) : ''}
+                  {task.tags ? <Tag>{task.tags}</Tag> : ''}
                 </TableCell>
                 <TableCell align="center">
                   {editingIndex === index ? (
