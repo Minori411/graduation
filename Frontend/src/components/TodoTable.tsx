@@ -17,6 +17,7 @@ import DialogActions from '@mui/material/DialogActions';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { getToken } from '../config/authConfig';
 
 
 
@@ -98,19 +99,41 @@ export default function TodoTable() {
     setEditingIndex(-1);
   };
 
-  const handleConfirmDelete = () => {
-    setTasks((prevTasks) => {
-      const updatedTasks = [...prevTasks];
-      updatedTasks.splice(editingIndex, 1);
-      return updatedTasks;
-    });
-    setEditingIndex(-1);
-    setOpenDeleteModal(false);
-  };
-
-  const handleDelete = (index: number) => {
+  const openDeleteDialog = (index: number) => {
     setEditingIndex(index);
     setOpenDeleteModal(true);
+  };
+
+
+  async function deleteTaskFromDatabase(taskId) {
+    const accessToken = await getToken();
+    try {
+      await fetch(`https://localhost:7256/api/content/${taskId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        }
+      });
+      return true;
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      return false;
+    }
+  }
+  
+  const handleConfirmDelete = async () => {
+    const taskToDelete = tasks[editingIndex];
+    const isDeleted = await deleteTaskFromDatabase(taskToDelete.id);
+    if (isDeleted) {
+      setTasks((prevTasks) => {
+        const updatedTasks = [...prevTasks];
+        updatedTasks.splice(editingIndex, 1);
+        return updatedTasks;
+      });
+    }
+    setEditingIndex(-1);
+    setOpenDeleteModal(false);
   };
 
   const handleCloseDeleteModal = () => {
@@ -244,7 +267,7 @@ export default function TodoTable() {
                       <Button variant="contained" color="primary" onClick={() => handleEdit(index)}>
                         編集
                       </Button>
-                      <Button variant="contained" color="secondary" onClick={() => handleDelete(index)}>
+                      <Button variant="contained" color="secondary" onClick={() =>openDeleteDialog(index)}>
                         削除
                       </Button>
                     </>
@@ -259,13 +282,13 @@ export default function TodoTable() {
           )}
         </TableBody>
       </TableWrapper>
-      <Dialog open={openDeleteModal} onClose={handleCloseDeleteModal}>
+      <Dialog open={openDeleteModal} onClose={() => setOpenDeleteModal(false)}>
         <DialogTitle>タスクの削除</DialogTitle>
         <DialogContent>
           <p>本当にこのタスクを削除しますか？</p>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDeleteModal} color="primary">
+          <Button onClick={() => setOpenDeleteModal(false)} color="primary">
             キャンセル
           </Button>
           <Button onClick={handleConfirmDelete} color="secondary">
