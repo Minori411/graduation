@@ -8,6 +8,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import RegisterDialogContent from './RegisterDialogContent';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { tasksState } from '../atoms/Tasks';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
   taskContentState,
@@ -17,50 +18,61 @@ import {
 } from '../atoms/RegisterDialogContent';
 import { getToken } from '../config/authConfig';
 
-// 適切なパスに修正してください
-
 type Props = {
   open: boolean;
   onClose: () => void;
 };
 
 export default function RegisterDialog({ open, onClose }: Props) {
-  const taskContent = useRecoilValue(taskContentState);
-  const taskDetail = useRecoilValue(taskDetailState);
-  const taskDeadline = useRecoilValue(taskDeadlineState);
-  const taskTag = useRecoilValue(taskTagState);
   const [tasks, setTasks] = useRecoilState(tasksState);
- 
+  const [task, setTask] = useRecoilState(taskContentState);
+  const [detail, setDetail] = useRecoilState(taskDetailState);
+  const [deadline, setDeadline] = useRecoilState(taskDeadlineState);
+  const [tags, setTags] = useRecoilState(taskTagState);
+  const [newTask, setNewTask] = useState('');
 
-  const handleRegister = async () => {
+  const addTask = async () => {
     try {
-
       const accessToken = await getToken();
 
-      const newTask = { 
-        task: taskContent,
-        detail: taskDetail,
-        deadline: taskDeadline,
-        isComplete: false,
-        tags: taskTag
+      const taskData = {
+        task: task,
+        detail: detail,
+        deadline: deadline,
+        tags: tags,
       };
 
-      const response = await axios.post('content', newTask, {
+      // タスクデータをローカルストレージに保存
+      localStorage.setItem('task', JSON.stringify(taskData));
+
+      // タスクデータをサーバーに登録
+      const response = await axios.post('content', taskData, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        }
+          Authorization: `Bearer ${accessToken}`,
+        },
       });
 
       console.log('タスクが正常に登録されました:', response);
       setTasks((prevTasks) => [...prevTasks, response.data]);
       onClose(); // ダイアログを閉じる
-
     } catch (error) {
       console.error('タスク登録中にエラーが発生しました:', error);
       alert('タスク登録中にエラーが発生しました。'); // ユーザーへの通知
     }
   };
+
+  useEffect(() => {
+    // ローカルストレージからデータを取得して復元
+    const savedTask = localStorage.getItem('task');
+    if (savedTask) {
+      const parsedTask = JSON.parse(savedTask);
+      setTask(parsedTask.task);
+      setDetail(parsedTask.detail);
+      setDeadline(new Date(parsedTask.deadline));
+      setTags(parsedTask.tags);
+    }
+  }, []);
 
   return (
     <Dialog open={open} onClose={onClose} aria-labelledby="form-dialog-title" fullWidth>
@@ -73,7 +85,7 @@ export default function RegisterDialog({ open, onClose }: Props) {
         <Button onClick={onClose} color="primary">
           キャンセル
         </Button>
-        <Button onClick={handleRegister} color="primary">
+        <Button onClick={addTask} color="primary">
           登録
         </Button>
       </DialogActions>

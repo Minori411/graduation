@@ -43,6 +43,7 @@ export const msalConfig = {
 // APIリクエストのスコープ
 export const loginApiRequest = {
   scopes: ["api://7c78d20e-ddc7-4a38-bbc2-2db066510c73/api.scope"],
+  redirectUri: "https://localhost:44449/"
 };
 
 

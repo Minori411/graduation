@@ -8,10 +8,12 @@ import Home from './components/Home';
 import TodoList from './components/TodoList'; 
 import { AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItem, ListItemText } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import { useNavigate } from "react-router-dom";
 
 function App() {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const { instance } = useMsal();
+  const navigate = useNavigate();
+  const { instance,accounts } = useMsal();
   const toggleDrawer = (open) => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
@@ -26,7 +28,7 @@ function App() {
       onKeyDown={toggleDrawer(false)}
     >
       <List>
-        {['Login', 'Logout', 'Register'].map((text, index) => (
+        {['Login', 'Logout', 'Register', 'Home'].map((text, index) => (
           <ListItem button key={text} component={Link} to={`/${text.toLowerCase()}`}>
             <ListItemText primary={text} />
           </ListItem>
@@ -34,7 +36,6 @@ function App() {
       </List>
     </div>
   );
-
   useEffect(() => {
     const accounts = instance.getAllAccounts();
     if (accounts.length > 0) {
