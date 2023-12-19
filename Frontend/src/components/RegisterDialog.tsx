@@ -6,7 +6,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import RegisterDialogContent from './RegisterDialogContent';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { tasksState } from '../atoms/Tasks';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -18,17 +18,19 @@ import {
 } from '../atoms/RegisterDialogContent';
 import { getToken } from '../config/authConfig';
 
+
 type Props = {
   open: boolean;
   onClose: () => void;
 };
 
 export default function RegisterDialog({ open, onClose }: Props) {
-  const taskContent = useRecoilValue(taskContentState);
-  const taskDetail = useRecoilValue(taskDetailState);
-  const taskDeadline = useRecoilValue(taskDeadlineState);
-  const taskTag = useRecoilValue(taskTagState);
   const [tasks, setTasks] = useRecoilState(tasksState);
+  const [task, setTask] = useRecoilState(taskContentState);
+  const [detail, setDetail] = useRecoilState(taskDetailState);
+  const [deadline, setDeadline] = useRecoilState(taskDeadlineState);
+  const [tags, setTags] = useRecoilState(taskTagState);
+  const [newTask, setNewTask] = useState('');
 
   // APIからTodo項目を読み込む関数
   const loadTasks = async () => {
@@ -43,13 +45,11 @@ export default function RegisterDialog({ open, onClose }: Props) {
         },
       });
 
-      console.log('タスクが正常に登録されました:', response);
-      setTasks((prevTasks) => [...prevTasks, response.data]);
-      onClose(); // ダイアログを閉じる
-
+      // 取得したデータをセット
+      setTasks(response.data);
     } catch (error) {
-      console.error('タスク登録中にエラーが発生しました:', error);
-      alert('タスク登録中にエラーが発生しました。'); // ユーザーへの通知
+      console.error('タスク読み込み中にエラーが発生しました:', error);
+      alert('タスク読み込み中にエラーが発生しました。'); // ユーザーへの通知
     }
   };
 
@@ -57,17 +57,15 @@ export default function RegisterDialog({ open, onClose }: Props) {
     try {
       const accessToken = await getToken();
 
-      const newTask = { 
-        task: taskContent,
-        detail: taskDetail,
-        deadline: taskDeadline,
-        isComplete: false,
-        tags: taskTag
+      const taskData = {
+        task: newTask,
+        detail: detail,
+        deadline: deadline,
+        tags: tags,
       };
 
-
       // タスクデータをサーバーに登録
-      const response = await axios.post('content', newTask, {
+      const response = await axios.post('content', taskData, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${accessToken}`,
