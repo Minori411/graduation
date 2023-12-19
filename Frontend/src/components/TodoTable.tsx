@@ -20,6 +20,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { Chip } from '@mui/material';
 import { getToken } from "../config/authConfig"
+import { startOfDay } from 'date-fns';
 
 import { tasksState, Task } from '../atoms/Tasks';
 
@@ -182,8 +183,11 @@ export default function TodoTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-        {tasks && tasks.map((task, index) => {
-            const isExpired = task.deadline && isPast(new Date(task.deadline));
+           {tasks && tasks.map((task, index) => {
+            // 今日の日付の0時0分0秒を取得
+            const todayStart = startOfDay(new Date());
+            // 期限が今日の0時0分0秒より前であれば、期限切れと判断
+            const isExpired = task.deadline && isPast(new Date(task.deadline)) && new Date(task.deadline) < todayStart;
             const TableRowComponent = isExpired ? ExpiredTaskRow : TableRow;
 
             return (

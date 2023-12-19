@@ -18,6 +18,7 @@ import {
 } from '../atoms/RegisterDialogContent';
 import { getToken } from '../config/authConfig';
 
+
 type Props = {
   open: boolean;
   onClose: () => void;
