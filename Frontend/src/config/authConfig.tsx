@@ -43,6 +43,7 @@ export const msalConfig = {
 // APIリクエストのスコープ
 export const loginApiRequest = {
   scopes: ["api://7c78d20e-ddc7-4a38-bbc2-2db066510c73/api.scope"],
+  redirectUri: "https://localhost:44449/"
 };
 
 
@@ -58,9 +59,8 @@ export async function getToken() {
     });
     return response.accessToken;
   } catch (error) {
-    console.error("トークン取得エラー:", error);
-    // ここでログインフローの呼び出しやエラーハンドリングを行う
-    throw error;
+    const errorMessage = "トークン取得エラー";
+    console.error(errorMessage); // エラーメッセージをコンソールに出力
   }
 }
 

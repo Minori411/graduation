@@ -6,6 +6,7 @@ export const SignInButton = () => {
 
   const handleLogin = () => {
     instance.loginRedirect(loginApiRequest).catch((e) => {
+      
       console.error("Login error:", e);
     });
   };

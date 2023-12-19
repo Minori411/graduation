@@ -1,5 +1,5 @@
-import React,{ useEffect } from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import React, { useEffect, useState } from 'react';
+import { useRecoilState } from 'recoil';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import DialogContent from '@mui/material/DialogContent';
@@ -7,61 +7,17 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { TextFieldProps } from '@mui/material';
-import { useState } from 'react';
 import { Chip } from '@mui/material';
-import { tasksState, Task } from '../atoms/Tasks';
-
-
-
-import {
-  taskContentState,
-  taskDetailState,
-  taskDeadlineState,
-  taskTagState
-} from '../atoms/RegisterDialogContent';
-
+import { taskContentState, taskDetailState, taskDeadlineState, taskTagState } from '../atoms/RegisterDialogContent';
 
 export default function RegisterDialogContent() {
-  const [Task,setTask] = useRecoilState(taskContentState);
-  const [Detail,setDetail] = useRecoilState(taskDetailState);
+  const [task, setTask] = useRecoilState(taskContentState);
+  const [detail, setDetail] = useRecoilState(taskDetailState);
   const [deadline, setDeadline] = useRecoilState(taskDeadlineState);
   const [tags, setTags] = useRecoilState(taskTagState);
-  const [tagInput, setTagInput] = useState('');
 
-  
+  const [newTask, setNewTask] = useState('');
 
-
-// handleContentChange関数の修正
-const handleContentChange = (
-  e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-) => {
-  const value = e.target.value;
-  setTask(value);
-};
-
-  // handleDetailChange関数の修正
-const handleDetailChange = (
-  e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-) => {
-  const value = e.target.value;
-  setDetail(value);
-};
-
-  // タスクの期限が変更されたとき
-  const handleDeadlineChange = (date: Date | null) => {
-    if (date) {
-      setDeadline(date);
-    }
-  };
-
-
-  const handleChangeTag = (
-    e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-  ) => {
-    const value = e.target.value;
-    setTags(value);
-  };
-  console.log(deadline);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -70,38 +26,39 @@ const handleDetailChange = (
         <Grid container spacing={6} direction="column">
           <Grid item>
             <TextField
-              onChange={handleContentChange}
+              onChange={(e) => setNewTask(e.target.value)}
               margin="dense"
               id="name"
               label="内容"
-              value={Task}
+              value={newTask}
               fullWidth
             />
             <TextField
-              onChange={handleDetailChange}
+              onChange={(e) => setDetail(e.target.value)}
               margin="dense"
               id="detail"
               label="詳細"
-              value={Detail}
+              value={detail}
               fullWidth
             />
-           
+
             <DatePicker
               disablePast
               views={['day']}
               inputFormat="yyyy/MM/dd"
               label="期限"
               value={deadline}
-              onChange={handleDeadlineChange}
+              onChange={(date) => setDeadline(date)}
               renderInput={(params: TextFieldProps) => (
                 <TextField {...params} />
               )}
             />
+
             <TextField
-            label="タグを追加"
-            onChange={handleChangeTag}
-            fullWidth
-          />
+              label="タグを追加"
+              onChange={(e) => setTags(e.target.value)}
+              fullWidth
+            />
           </Grid>
         </Grid>
       </DialogContent>
