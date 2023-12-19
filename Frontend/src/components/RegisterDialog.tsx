@@ -36,7 +36,7 @@ export default function RegisterDialog({ open, onClose }: Props) {
       const accessToken = await getToken();
 
       const taskData = {
-        task: task,
+        task: newTask,
         detail: detail,
         deadline: deadline,
         tags: tags,

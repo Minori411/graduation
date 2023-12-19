@@ -1,7 +1,7 @@
 import { atom } from 'recoil';
 
 export interface Task {
-  id: string;
+  id: number;
   task: string;
   detail: string;
   deadline: any;

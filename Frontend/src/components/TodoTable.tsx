@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import Table from '@mui/material/Table';
 import TableHead from '@mui/material/TableHead';
@@ -59,20 +59,6 @@ export default function TodoTable() {
   const [editingTags, setEditingTags] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
-
-  // タスクの読み込み
-  useEffect(() => {
-    const storedTasks = localStorage.getItem('tasks');
-    if (storedTasks) {
-      setTasks(JSON.parse(storedTasks));
-    }
-  }, [setTasks]);
-
-  // タスクの保存
-  useEffect(() => {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-  }, [tasks]);
-
 
   const handleCheck = (index: number) => {
     setTasks((prevTasks) => {
