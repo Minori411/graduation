@@ -54,11 +54,11 @@ const Tag = styled('span')({
 export default function TodoTable() {
   const [tasks, setTasks] = useRecoilState<Task[]>(tasksState);
   const [editingIndex, setEditingIndex] = useState<number>(-1);
+  const [editingContent, setEditingContent] = useState<string>('');
+  const [editingDetail, setEditingDetail] = useState<string>('');
   const [editingTags, setEditingTags] = useState<string>('');
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
-  const [confirmDelete, setConfirmDelete] = useState<(() => void) | null>(null);
-  const [editingContent, setEditingContent] = useState<string>(''); //
 
   const handleCheck = (index: number) => {
     setTasks((prevTasks) => {
@@ -76,10 +76,12 @@ export default function TodoTable() {
   };
 
   const handleEdit = (index: number) => {
+    const task = tasks[index]
     setEditingIndex(index);
-    setSelectedDate(tasks[index].deadline);
-    setEditingTags(tasks[index].tags); 
-    setEditingContent(tasks[index].task);
+    setEditingContent(task.task);
+    setEditingDetail(task.detail);
+    setEditingTags(task.tags);
+    setSelectedDate(task.deadline);
   };
 
   async function updateTaskInDatabase(task) {
@@ -104,32 +106,26 @@ export default function TodoTable() {
     }
   }
   
-  const handleSave = async (index: number, updatedContent: string, updatedDetail: string, updatedTags: string) => {
+  const handleSave = async (index: number) => {
     const updatedTask = {
       ...tasks[index],
-      content: editingContent,
-      detail: updatedDetail,
+      task: editingContent,
+      detail: editingDetail,
       deadline: selectedDate,
-      tags: updatedTags,
+      tags: editingTags
     };
   
     const isUpdated = await updateTaskInDatabase(updatedTask);
     if (isUpdated) {
       setTasks((prevTasks) => {
-        const updatedTasks = prevTasks.map((task, i) => {
-          if (i === index) {
-            return updatedTask;
-          }
-          return task;
-        });
+        const updatedTasks = prevTasks.map((task, i) => (i === index ? updatedTask : task));
         return updatedTasks;
       });
+      setEditingIndex(-1);
     }
-    setEditingIndex(-1);
   };
 
   const openDeleteDialog = (index: number) => {
-    setEditingIndex(index);
     setOpenDeleteModal(true);
   };
 
@@ -180,6 +176,7 @@ export default function TodoTable() {
             <TableCell>詳細</TableCell>
             <TableCell>期日</TableCell>
             <TableCell>タグ</TableCell>
+            <TableCell>編集／削除</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -193,56 +190,26 @@ export default function TodoTable() {
                   />
                 </CompleteCell>
                 <TableCell>
-                  {editingIndex === index ? (
-                    <TextField
-                      value={task.task}
-                      onChange={(e) => {
-                        const updatedContent = e.target.value;
-                        setTasks((prevTasks) => {
-                          const updatedTasks = prevTasks.map((t, i) => {
-                            if (i === index) {
-                              return {
-                                ...t,
-                                content: updatedContent,
-                              };
-                            }
-                            return t;
-                          });
-                          return updatedTasks;
-                        });
-                      }}
-                    />
-                  ) : (
-                    
-                    task.task
-                    
-                  )}
+                {editingIndex === index ? (
+                <TextField
+                  value={editingContent}
+                  onChange={(e) => setEditingContent(e.target.value)}
+                />
+              ) : (
+                task.task
+              )}
                 </TableCell>
-                <HorizontalTextCell>
+                <TableCell>
                   {editingIndex === index ? (
                     <TextField
-                      value={task.detail}
-                      onChange={(e) => {
-                        const updatedDetail = e.target.value;
-                        setTasks((prevTasks) => {
-                          const updatedTasks = prevTasks.map((t, i) => {
-                            if (i === index) {
-                              return {
-                                ...t,
-                                detail: updatedDetail,
-                              };
-                            }
-                            return t;
-                          });
-                          return updatedTasks;
-                        });
-                      }}
+                      value={editingDetail}
+                      onChange={(e) => setEditingDetail(e.target.value)}
                     />
                   ) : (
                     task.detail
                   )}
             
-                </HorizontalTextCell>
+                </TableCell>
                 <TableCell>
                   {editingIndex === index ? (
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -284,7 +251,7 @@ export default function TodoTable() {
                     <Button
                       variant="contained"
                       color="primary"
-                      onClick={() => handleSave(index, task.task, task.detail, task.tags)}
+                      onClick={() => handleSave(index)}
                     >
                       保存
                     </Button>
