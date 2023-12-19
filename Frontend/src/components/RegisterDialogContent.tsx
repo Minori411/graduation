@@ -18,40 +18,6 @@ export default function RegisterDialogContent() {
 
   const [newTask, setNewTask] = useState('');
 
-  // useEffect(() => {
-  //   // ローカルストレージからデータを取得して復元
-  //   const savedTask = localStorage.getItem('task');
-  //   if (savedTask) {
-  //     const parsedTask = JSON.parse(savedTask);
-  //     setTask(parsedTask.task);
-  //     setDetail(parsedTask.detail);
-  //     setDeadline(new Date(parsedTask.deadline));
-  //     setTags(parsedTask.tags);
-  //   }
-  // }, []);
-
-  // const addTask = () => {
-  //   if (newTask.trim() !== '') {
-  //     const taskData = {
-  //       task: newTask,
-  //       detail: detail,
-  //       deadline: deadline,
-  //       tags: tags,
-  //     };
-
-  //     // 新しいタスクをステートにセット
-  //     setTask(newTask);
-  //     setDetail(detail);
-  //     setDeadline(deadline);
-  //     setTags(tags);
-
-  //     // タスクデータをローカルストレージに保存
-  //     localStorage.setItem('task', JSON.stringify(taskData));
-
-  //     // 新しいタスクを追加
-  //     setNewTask('');
-  //   }
-  // };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>

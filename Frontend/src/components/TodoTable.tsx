@@ -18,6 +18,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { getToken } from '../config/authConfig';
+import { Chip } from '@mui/material';
 
 
 
@@ -82,6 +83,8 @@ export default function TodoTable() {
     setEditingDetail(task.detail);
     setEditingTags(task.tags);
     setSelectedDate(task.deadline);
+
+    
   };
 
   async function updateTaskInDatabase(task) {
@@ -112,13 +115,15 @@ export default function TodoTable() {
       task: editingContent,
       detail: editingDetail,
       deadline: selectedDate,
-      tags: editingTags
+      tags: editingTags,
     };
   
     const isUpdated = await updateTaskInDatabase(updatedTask);
     if (isUpdated) {
       setTasks((prevTasks) => {
-        const updatedTasks = prevTasks.map((task, i) => (i === index ? updatedTask : task));
+        const updatedTasks = prevTasks.map((task, i) =>
+          i === index ? updatedTask : task
+        );
         return updatedTasks;
       });
       setEditingIndex(-1);
@@ -148,17 +153,21 @@ export default function TodoTable() {
   }
   
   const handleConfirmDelete = async () => {
-    const taskToDelete = tasks[editingIndex];
-    const isDeleted = await deleteTaskFromDatabase(taskToDelete.id);
-    if (isDeleted) {
-      setTasks((prevTasks) => {
-        const updatedTasks = [...prevTasks];
-        updatedTasks.splice(editingIndex, 1);
-        return updatedTasks;
-      });
+    if (editingIndex >= 0 && editingIndex < tasks.length) {
+      const taskToDelete = tasks[editingIndex];
+      const isDeleted = await deleteTaskFromDatabase(taskToDelete.id);
+      if (isDeleted) {
+        setTasks((prevTasks) => {
+          const updatedTasks = [...prevTasks];
+          updatedTasks.splice(editingIndex, 1);
+          return updatedTasks;
+        });
+      }
+      setEditingIndex(-1);
+      setOpenDeleteModal(false);
+    } else {
+      console.error('削除対象のタスクが見つかりません。');
     }
-    setEditingIndex(-1);
-    setOpenDeleteModal(false);
   };
 
 
@@ -243,7 +252,7 @@ export default function TodoTable() {
                     onChange={(e) => setEditingTags(e.target.value)}
                   />
                 ) : (
-                  <Tag>{task.tags}</Tag> 
+                  <Chip label={String(task.tags)} /> 
                   )}
                 </TableCell>
                 <TableCell align="center">

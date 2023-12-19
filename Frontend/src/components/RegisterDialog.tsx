@@ -6,7 +6,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import RegisterDialogContent from './RegisterDialogContent';
-import { useRecoilValue, useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { tasksState } from '../atoms/Tasks';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -24,29 +24,19 @@ type Props = {
 };
 
 export default function RegisterDialog({ open, onClose }: Props) {
+  const taskContent = useRecoilValue(taskContentState);
+  const taskDetail = useRecoilValue(taskDetailState);
+  const taskDeadline = useRecoilValue(taskDeadlineState);
+  const taskTag = useRecoilValue(taskTagState);
   const [tasks, setTasks] = useRecoilState(tasksState);
-  const [task, setTask] = useRecoilState(taskContentState);
-  const [detail, setDetail] = useRecoilState(taskDetailState);
-  const [deadline, setDeadline] = useRecoilState(taskDeadlineState);
-  const [tags, setTags] = useRecoilState(taskTagState);
-  const [newTask, setNewTask] = useState('');
 
-  const addTask = async () => {
+  // APIからTodo項目を読み込む関数
+  const loadTasks = async () => {
     try {
       const accessToken = await getToken();
 
-      const taskData = {
-        task: newTask,
-        detail: detail,
-        deadline: deadline,
-        tags: tags,
-      };
-
-      // タスクデータをローカルストレージに保存
-      localStorage.setItem('task', JSON.stringify(taskData));
-
-      // タスクデータをサーバーに登録
-      const response = await axios.post('content', taskData, {
+      // サーバーからタスクデータを取得
+      const response = await axios.get('content', {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${accessToken}`,
@@ -56,6 +46,41 @@ export default function RegisterDialog({ open, onClose }: Props) {
       console.log('タスクが正常に登録されました:', response);
       setTasks((prevTasks) => [...prevTasks, response.data]);
       onClose(); // ダイアログを閉じる
+
+    } catch (error) {
+      console.error('タスク登録中にエラーが発生しました:', error);
+      alert('タスク登録中にエラーが発生しました。'); // ユーザーへの通知
+    }
+  };
+
+  const addTask = async () => {
+    try {
+      const accessToken = await getToken();
+
+      const newTask = { 
+        task: taskContent,
+        detail: taskDetail,
+        deadline: taskDeadline,
+        isComplete: false,
+        tags: taskTag
+      };
+
+
+      // タスクデータをサーバーに登録
+      const response = await axios.post('content', newTask, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      console.log('タスクが正常に登録されました:', response);
+
+      // 新しいタスクをタスクリストに追加
+      setTasks((prevTasks) => [...prevTasks, response.data]);
+
+      // ダイアログを閉じる
+      onClose();
     } catch (error) {
       console.error('タスク登録中にエラーが発生しました:', error);
       alert('タスク登録中にエラーが発生しました。'); // ユーザーへの通知
@@ -63,16 +88,9 @@ export default function RegisterDialog({ open, onClose }: Props) {
   };
 
   useEffect(() => {
-    // ローカルストレージからデータを取得して復元
-    const savedTask = localStorage.getItem('task');
-    if (savedTask) {
-      const parsedTask = JSON.parse(savedTask);
-      setTask(parsedTask.task);
-      setDetail(parsedTask.detail);
-      setDeadline(new Date(parsedTask.deadline));
-      setTags(parsedTask.tags);
-    }
-  }, []);
+    // コンポーネントがマウントされたときにAPIからTodo項目を読み込む
+    loadTasks();
+  }, []); // 依存リストが空なので、初回のレンダリング時にのみ実行されます
 
   return (
     <Dialog open={open} onClose={onClose} aria-labelledby="form-dialog-title" fullWidth>

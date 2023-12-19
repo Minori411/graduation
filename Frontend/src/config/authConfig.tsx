@@ -59,9 +59,8 @@ export async function getToken() {
     });
     return response.accessToken;
   } catch (error) {
-    console.error("トークン取得エラー:", error);
-    // ここでログインフローの呼び出しやエラーハンドリングを行う
-    throw error;
+    const errorMessage = "トークン取得エラー";
+    console.error(errorMessage); // エラーメッセージをコンソールに出力
   }
 }
 
