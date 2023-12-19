@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
+import { format, isPast } from 'date-fns';
+import { styled } from '@mui/system';
 import Table from '@mui/material/Table';
 import TableHead from '@mui/material/TableHead';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
-import { format } from 'date-fns';
 import Checkbox from '@mui/material/Checkbox';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -17,14 +18,10 @@ import DialogActions from '@mui/material/DialogActions';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { getToken } from '../config/authConfig';
 import { Chip } from '@mui/material';
-
-
+import { getToken } from "../config/authConfig"
 
 import { tasksState, Task } from '../atoms/Tasks';
-
-import { styled } from '@mui/system';
 
 const TableWrapper = styled(Table)({
   minWidth: 650,
@@ -34,13 +31,8 @@ const CompleteCell = styled(TableCell)({
   paddingLeft: '20px',
 });
 
-const HorizontalTextCell = styled(TableCell)({
-  writingMode: 'horizontal-tb',
-  paddingLeft: '20px',
-});
-
-const CompletedTaskCell = styled(TableCell)({
-  textDecoration: 'line-through',
+const ExpiredTaskRow = styled(TableRow)({
+  backgroundColor: '#ffcccc', // Style for expired tasks
 });
 
 const TagCell = styled(TableCell)({
@@ -51,6 +43,7 @@ const TagCell = styled(TableCell)({
 const Tag = styled('span')({
   margin: '4px',
 });
+
 
 export default function TodoTable() {
   const [tasks, setTasks] = useRecoilState<Task[]>(tasksState);
@@ -189,9 +182,12 @@ export default function TodoTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {tasks ? (
-            tasks.map((task, index) => (
-              <TableRow key={task.id}>
+        {tasks && tasks.map((task, index) => {
+            const isExpired = task.deadline && isPast(new Date(task.deadline));
+            const TableRowComponent = isExpired ? ExpiredTaskRow : TableRow;
+
+            return (
+              <TableRowComponent key={task.id}>
                 <CompleteCell padding="checkbox">
                   <Checkbox
                     checked={task.isComplete}
@@ -199,14 +195,14 @@ export default function TodoTable() {
                   />
                 </CompleteCell>
                 <TableCell>
-                {editingIndex === index ? (
-                <TextField
-                  value={editingContent}
-                  onChange={(e) => setEditingContent(e.target.value)}
-                />
-              ) : (
-                task.task
-              )}
+                  {editingIndex === index ? (
+                    <TextField
+                      value={editingContent}
+                      onChange={(e) => setEditingContent(e.target.value)}
+                    />
+                  ) : (
+                    task.task
+                  )}
                 </TableCell>
                 <TableCell>
                   {editingIndex === index ? (
@@ -217,7 +213,6 @@ export default function TodoTable() {
                   ) : (
                     task.detail
                   )}
-            
                 </TableCell>
                 <TableCell>
                   {editingIndex === index ? (
@@ -227,7 +222,6 @@ export default function TodoTable() {
                         value={selectedDate}
                         onChange={(date: Date | null) => setSelectedDate(date)}
                         inputFormat="yyyy/MM/dd"
-
                         renderInput={(params) => (
                           <TextField
                             {...params}
@@ -240,19 +234,17 @@ export default function TodoTable() {
                       />
                     </LocalizationProvider>
                   ) : (
-                 task.deadline ? format(new Date(task.deadline), 'yyyy/MM/dd') : '日付なし'
-                   
+                    task.deadline ? format(new Date(task.deadline), 'yyyy/MM/dd') : '日付なし'
                   )}
-                   
                 </TableCell>
                 <TableCell>
-                {editingIndex === index ? (
-                  <TextField
-                    value={editingTags}
-                    onChange={(e) => setEditingTags(e.target.value)}
-                  />
-                ) : (
-                  <Chip label={String(task.tags)} /> 
+                  {editingIndex === index ? (
+                    <TextField
+                      value={editingTags}
+                      onChange={(e) => setEditingTags(e.target.value)}
+                    />
+                  ) : (
+                    <Chip label={String(task.tags)} /> 
                   )}
                 </TableCell>
                 <TableCell align="center">
@@ -269,19 +261,15 @@ export default function TodoTable() {
                       <Button variant="contained" color="primary" onClick={() => handleEdit(index)}>
                         編集
                       </Button>
-                      <Button variant="contained" color="secondary" onClick={() =>openDeleteDialog(index)}>
+                      <Button variant="contained" color="secondary" onClick={() => openDeleteDialog(index)}>
                         削除
                       </Button>
                     </>
                   )}
                 </TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={5}>タスクがありません</TableCell>
-            </TableRow>
-          )}
+              </TableRowComponent>
+            );
+          })}
         </TableBody>
       </TableWrapper>
       <Dialog open={openDeleteModal} onClose={() => setOpenDeleteModal(false)}>
