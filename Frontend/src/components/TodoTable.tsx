@@ -48,6 +48,7 @@ const Tag = styled('span')({
 
 export default function TodoTable() {
   const [tasks, setTasks] = useRecoilState<Task[]>(tasksState);
+  const [deleteIndex, setDeleteIndex] = useState<number>(-1);
   const [editingIndex, setEditingIndex] = useState<number>(-1);
   const [editingContent, setEditingContent] = useState<string>('');
   const [editingDetail, setEditingDetail] = useState<string>('');
@@ -125,6 +126,7 @@ export default function TodoTable() {
   };
 
   const openDeleteDialog = (index: number) => {
+    setDeleteIndex(index);
     setOpenDeleteModal(true);
   };
 
@@ -147,8 +149,10 @@ export default function TodoTable() {
   }
   
   const handleConfirmDelete = async () => {
-    if (editingIndex >= 0 && editingIndex < tasks.length) {
-      const taskToDelete = tasks[editingIndex];
+    console.log(editingIndex);
+    console.log(tasks);
+    if (deleteIndex >= 0 && deleteIndex < tasks.length) {
+      const taskToDelete = tasks[deleteIndex];
       const isDeleted = await deleteTaskFromDatabase(taskToDelete.id);
       if (isDeleted) {
         setTasks((prevTasks) => {
@@ -157,8 +161,9 @@ export default function TodoTable() {
           return updatedTasks;
         });
       }
-      setEditingIndex(-1);
+      setDeleteIndex(-1);
       setOpenDeleteModal(false);
+      window.location.reload();
     } else {
       console.error('削除対象のタスクが見つかりません。');
     }

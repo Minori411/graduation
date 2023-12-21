@@ -25,11 +25,11 @@ export default function RegisterDialogContent() {
         <Grid container spacing={6} direction="column">
           <Grid item>
             <TextField
-              onChange={(e) => setNewTask(e.target.value)}
+              onChange={(e) => setTask(e.target.value)}
               margin="dense"
               id="name"
               label="内容"
-              value={newTask}
+              value={task}
               fullWidth
             />
             <TextField

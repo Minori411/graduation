@@ -8,11 +8,11 @@ export const msalConfig = {
   auth: {
     clientId: "7c78d20e-ddc7-4a38-bbc2-2db066510c73", // クライアントID
     authority: 'https://login.microsoftonline.com/34e13d85-3d97-43dd-9521-81f6ed0fdb5d', // テナントID
-    redirectUri: "https://localhost:44449/",
+    redirectUri: "https://localhost:44449",
   },
   cache: {
     cacheLocation: "sessionStorage", // キャッシュの保存場所
-    storeAuthStateInCookie: false, // IE11やEdgeで問題がある場合は"true"に設定
+    storeAuthStateInCookie: true, // IE11やEdgeで問題がある場合は"true"に設定
   },
   system: {
     loggerOptions: {
@@ -43,7 +43,7 @@ export const msalConfig = {
 // APIリクエストのスコープ
 export const loginApiRequest = {
   scopes: ["api://7c78d20e-ddc7-4a38-bbc2-2db066510c73/api.scope"],
-  redirectUri: "https://localhost:44449/"
+  redirectUri: "https://localhost:44449"
 };
 
 
